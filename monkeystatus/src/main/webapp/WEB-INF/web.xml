@@ -5,7 +5,7 @@
 http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
          id="WebApp_ID" version="2.5">
 
-    <display-name>appMonitor</display-name>
+    <display-name>monkeyStatus</display-name>
     
    <context-param>
       <param-name>contextClass</param-name>
@@ -15,7 +15,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
    </context-param>
    <context-param>
       <param-name>contextConfigLocation</param-name>
-      <param-value>net.jadefisher.appmonitor</param-value>
+      <param-value>net.jadefisher.monkeystatus</param-value>
    </context-param>
    <listener>
       <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
@@ -34,7 +34,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
       </init-param>
       <init-param>
          <param-name>contextConfigLocation</param-name>
-         <param-value>net.jadefisher.appmonitor.controller</param-value>
+         <param-value>net.jadefisher.monkeystatus.controller</param-value>
       </init-param>
       <load-on-startup>1</load-on-startup>
    </servlet>
