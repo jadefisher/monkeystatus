@@ -1,8 +1,5 @@
 package net.jadefisher.monkeystatus.model;
 
-import java.util.List;
-import java.util.Map;
-
 public class Service {
 	private String id;
 
