@@ -20,12 +20,16 @@ import net.jadefisher.monkeystatus.runner.MonitorRunner;
 import net.jadefisher.monkeystatus.runner.PingMonitorRunner;
 import net.jadefisher.monkeystatus.runner.TelnetMonitorRunner;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class MonitorManagerImpl implements MonitorManager {
+	private static final Log log = LogFactory.getLog(MonitorManagerImpl.class);
+
 	@Autowired
 	private MonitorRepository monitorRepository;
 
@@ -43,7 +47,7 @@ public class MonitorManagerImpl implements MonitorManager {
 	@PostConstruct
 	@Override
 	public void initialiseMonitoring() {
-		System.out.println("hello");
+		log.info("Starting up");
 		runners = new ArrayList<MonitorRunner<?>>();
 		List<Monitor> monitors = monitorRepository.getMonitors();
 

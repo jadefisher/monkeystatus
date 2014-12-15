@@ -15,7 +15,7 @@ import org.yaml.snakeyaml.Yaml;
 @Repository
 public class MonitorRepositoryImpl implements MonitorRepository {
 
-	@Value("${appmonitor.monitorDefsPath}")
+	@Value("${monkeystatus.monitorDefsPath}")
 	private String monitorDefsPath;
 
 	@SuppressWarnings("unchecked")

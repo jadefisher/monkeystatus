@@ -15,7 +15,7 @@ import org.yaml.snakeyaml.Yaml;
 @Repository
 public class ServiceRepositoryImpl implements ServiceRepository {
 
-	@Value("${appmonitor.serviceDefsPath}")
+	@Value("${monkeystatus.serviceDefsPath}")
 	private String serviceDefsPath;
 
 	@SuppressWarnings("unchecked")

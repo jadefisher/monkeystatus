@@ -16,13 +16,13 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 @PropertySource("classpath:application.properties")
 public class AppConfig {
 
-	@Value("${appmonitor.http.connections.maxTotal}")
+	@Value("${monkeystatus.http.connections.maxTotal}")
 	private int maxConnections;
 
-	@Value("${appmonitor.http.connections.defaultMaxPerRoute}")
+	@Value("${monkeystatus.http.connections.defaultMaxPerRoute}")
 	private int defaultMaxPerRoute;
 
-	@Value("${appmonitor.scheduleThreadPoolSize}")
+	@Value("${monkeystatus.scheduleThreadPoolSize}")
 	private int scheduleThreadPoolSize;
 
 	@Bean
