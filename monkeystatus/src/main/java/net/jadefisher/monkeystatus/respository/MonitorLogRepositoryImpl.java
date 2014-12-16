@@ -14,7 +14,7 @@ public class MonitorLogRepositoryImpl implements MonitorLogRepository {
 			.getLog(MonitorLogRepositoryImpl.class);
 
 	@Override
-	public void appendMonitorLog(MonitorLogEntry logEntry) {
+	public void create(MonitorLogEntry logEntry) {
 		try {
 			String dateStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S")
 					.format(logEntry.getCreatedDate());

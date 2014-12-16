@@ -2,12 +2,16 @@ package net.jadefisher.monkeystatus.model.monitor;
 
 import java.util.List;
 
+import net.jadefisher.monkeystatus.model.event.ServiceEventType;
+
 public abstract class Monitor {
 	private String id;
 
 	private String name;
 
 	private String serviceId;
+
+	private ServiceEventType serviceEventType;
 
 	private List<String> tags;
 
@@ -33,6 +37,14 @@ public abstract class Monitor {
 
 	public void setServiceId(String serviceId) {
 		this.serviceId = serviceId;
+	}
+
+	public ServiceEventType getServiceEventType() {
+		return serviceEventType;
+	}
+
+	public void setServiceEventType(ServiceEventType serviceEventType) {
+		this.serviceEventType = serviceEventType;
 	}
 
 	public List<String> getTags() {

@@ -20,7 +20,7 @@ public class ServiceRepositoryImpl implements ServiceRepository {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Service> getServices() {
+	public List<Service> findAll() {
 		Yaml yaml = new Yaml();
 
 		InputStream yamlStream = null;

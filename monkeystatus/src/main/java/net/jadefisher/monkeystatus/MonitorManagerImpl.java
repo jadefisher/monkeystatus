@@ -49,7 +49,7 @@ public class MonitorManagerImpl implements MonitorManager {
 	public void initialiseMonitoring() {
 		log.info("Starting up");
 		runners = new ArrayList<MonitorRunner<?>>();
-		List<Monitor> monitors = monitorRepository.getMonitors();
+		List<Monitor> monitors = monitorRepository.findAll();
 
 		for (Monitor monitor : monitors) {
 			MonitorRunner<?> runner = null;

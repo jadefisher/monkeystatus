@@ -6,5 +6,5 @@ import net.jadefisher.monkeystatus.model.monitor.Monitor;
 
 public interface MonitorRepository {
 
-	List<Monitor> getMonitors();
+	List<Monitor> findAll();
 }

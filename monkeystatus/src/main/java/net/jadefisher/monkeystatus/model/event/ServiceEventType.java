@@ -1,4 +1,4 @@
-package net.jadefisher.monkeystatus.model;
+package net.jadefisher.monkeystatus.model.event;
 
 import java.util.ArrayList;
 import java.util.List;

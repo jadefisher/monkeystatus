@@ -20,7 +20,7 @@ public class MonitorRepositoryImpl implements MonitorRepository {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Monitor> getMonitors() {
+	public List<Monitor> findAll() {
 		Yaml yaml = new Yaml();
 
 		InputStream yamlStream = null;
