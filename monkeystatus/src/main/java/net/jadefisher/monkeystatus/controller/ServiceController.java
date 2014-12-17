@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping("/services")
 public class ServiceController {
-
 	@Autowired
 	private ServiceRepository serviceRepository;
 
@@ -33,8 +32,14 @@ public class ServiceController {
 		return serviceRepository.findAll();
 	}
 
+	@RequestMapping(value = "/{serviceId}", method = RequestMethod.GET, produces = { "application/json" })
+	public @ResponseBody Service getService(
+			@PathVariable("serviceId") String serviceId) {
+		return serviceRepository.find(serviceId);
+	}
+
 	@RequestMapping(value = "/{serviceId}/events", method = RequestMethod.GET, produces = { "application/json" })
-	public @ResponseBody List<ServiceEvent> list(
+	public @ResponseBody List<ServiceEvent> listEvents(
 			@PathVariable("serviceId") String serviceId) {
 		return serviceEventRepository.findByService(serviceId);
 	}

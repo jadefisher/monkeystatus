@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import net.jadefisher.monkeystatus.model.monitor.Monitor;
@@ -18,31 +19,59 @@ public class MonitorRepositoryImpl implements MonitorRepository {
 	@Value("${monkeystatus.monitorDefsPath}")
 	private String monitorDefsPath;
 
+	private List<Monitor> monitors;
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Monitor> findAll() {
-		Yaml yaml = new Yaml();
 
-		InputStream yamlStream = null;
-		try {
-			yamlStream = new FileInputStream(monitorDefsPath);
-			return (List<Monitor>) yaml.load(yamlStream);
+		if (monitors == null) {
+			Yaml yaml = new Yaml();
 
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			if (yamlStream != null) {
-				try {
-					yamlStream.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+			InputStream yamlStream = null;
+			try {
+				yamlStream = new FileInputStream(monitorDefsPath);
+				monitors = (List<Monitor>) yaml.load(yamlStream);
+
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally {
+				if (yamlStream != null) {
+					try {
+						yamlStream.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			}
 		}
 
+		return monitors;
+	}
+
+	@Override
+	public Monitor find(String monitorId) {
+		if (this.monitors != null) {
+			for (Monitor monitor : this.monitors) {
+				if (monitor.getId().equals(monitorId))
+					return monitor;
+			}
+		}
 		return null;
+	}
+
+	@Override
+	public List<Monitor> findByService(String serviceId) {
+		List<Monitor> serviceMonitors = new ArrayList<Monitor>();
+		if (this.monitors != null) {
+			for (Monitor monitor : this.monitors) {
+				if (monitor.getServiceId().equals(serviceId))
+					serviceMonitors.add(monitor);
+			}
+		}
+		return serviceMonitors;
 	}
 
 }

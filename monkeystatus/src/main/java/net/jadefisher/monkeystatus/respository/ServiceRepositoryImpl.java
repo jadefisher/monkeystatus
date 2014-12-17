@@ -18,27 +18,43 @@ public class ServiceRepositoryImpl implements ServiceRepository {
 	@Value("${monkeystatus.serviceDefsPath}")
 	private String serviceDefsPath;
 
+	private List<Service> services;
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Service> findAll() {
-		Yaml yaml = new Yaml();
 
-		InputStream yamlStream = null;
-		try {
-			yamlStream = new FileInputStream(serviceDefsPath);
-			return (List<Service>) yaml.load(yamlStream);
+		if (services == null) {
+			Yaml yaml = new Yaml();
 
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			if (yamlStream != null) {
-				try {
-					yamlStream.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+			InputStream yamlStream = null;
+			try {
+				yamlStream = new FileInputStream(serviceDefsPath);
+				services = (List<Service>) yaml.load(yamlStream);
+
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally {
+				if (yamlStream != null) {
+					try {
+						yamlStream.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
+			}
+		}
+		return services;
+	}
+
+	@Override
+	public Service find(String serviceId) {
+		if (this.services != null) {
+			for (Service service : this.services) {
+				if (service.getId().equals(serviceId))
+					return service;
 			}
 		}
 		return null;

@@ -43,10 +43,10 @@ public class PingMonitorRunner extends MonitorRunner<PingMonitor> {
 		try {
 			InetAddress.getByName(monitor.getTargetHost()).isReachable(
 					monitor.getPingTimeout());
-			eventManager.logMonitor(monitor, LogType.PASSED,
+			eventManager.logMonitorResult(monitor, LogType.PASSED,
 					monitor.getTargetHost() + " is reachable");
 		} catch (IOException e) {
-			eventManager.logMonitor(monitor, LogType.FAILED,
+			eventManager.logMonitorResult(monitor, LogType.FAILED,
 					monitor.getTargetHost() + " is unreachable");
 		}
 	}

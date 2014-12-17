@@ -6,4 +6,6 @@ import net.jadefisher.monkeystatus.model.Service;
 
 public interface ServiceRepository {
 	List<Service> findAll();
+
+	Service find(String serviceId);
 }

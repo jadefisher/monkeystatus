@@ -46,11 +46,11 @@ public class TelnetMonitorRunner extends MonitorRunner<TelnetMonitor> {
 		try {
 			socket.connect(new InetSocketAddress(this.monitor.getTargetHost(),
 					this.monitor.getTargetPort()));
-			eventManager.logMonitor(monitor, LogType.PASSED,
+			eventManager.logMonitorResult(monitor, LogType.PASSED,
 					"Connection okay to " + monitor.getTargetHost() + ":"
 							+ monitor.getTargetPort());
 		} catch (IOException e) {
-			eventManager.logMonitor(monitor, LogType.FAILED,
+			eventManager.logMonitorResult(monitor, LogType.FAILED,
 					"Connection refused to " + monitor.getTargetHost() + ":"
 							+ monitor.getTargetPort());
 		} finally {

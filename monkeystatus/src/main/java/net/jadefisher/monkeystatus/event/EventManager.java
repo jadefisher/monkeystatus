@@ -5,5 +5,5 @@ import net.jadefisher.monkeystatus.model.monitor.Monitor;
 
 public interface EventManager {
 
-	void logMonitor(Monitor monitor, LogType type, String message);
+	void logMonitorResult(Monitor monitor, LogType type, String message);
 }

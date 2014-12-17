@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -60,16 +62,17 @@ public class EndPointMonitorRunner extends MonitorRunner<EndPointMonitor> {
 	}
 
 	private void runMonitor() {
-		log.info("Checking monitor: " + this.monitor.getName()
-				+ " ----------------------------------------");
+		// log.info("Checking monitor: " + this.monitor.getName()
+		// + " ----------------------------------------");
 
 		cookieStore.clear();
 		Map<String, String> headers = new HashMap<String, String>();
+		List<HttpRequestResult> results = new ArrayList<HttpRequestResult>();
 
 		if (this.monitor.getFormAuthentication() != null) {
-			executeAndMonitorRequest(httpclient, this.monitor
-					.getFormAuthentication().getLogonRequest(), headers);
-			log.debug("authenticated with form authentication");
+			results.add(executeAndMonitorRequest(httpclient, this.monitor
+					.getFormAuthentication().getLogonRequest(), headers));
+			// log.debug("authenticated with form authentication");
 		} else if (this.monitor.getBasicAuthentication() != null) {
 			String authString = this.monitor.getBasicAuthentication()
 					.getUsername()
@@ -80,18 +83,40 @@ public class EndPointMonitorRunner extends MonitorRunner<EndPointMonitor> {
 		}
 
 		for (HttpRequestDefinition req : this.monitor.getRequests()) {
-			executeAndMonitorRequest(httpclient, req, headers);
+			results.add(executeAndMonitorRequest(httpclient, req, headers));
 		}
 
 		if (this.monitor.getFormAuthentication() != null
 				&& this.monitor.getFormAuthentication().getLogoffRequest() != null) {
-			executeAndMonitorRequest(httpclient, this.monitor
-					.getFormAuthentication().getLogoffRequest(), headers);
-			log.debug("logged off form authentication");
+			results.add(executeAndMonitorRequest(httpclient, this.monitor
+					.getFormAuthentication().getLogoffRequest(), headers));
+			// log.debug("logged off form authentication");
 		}
 
-		log.info("finished checking " + this.monitor.getName()
-				+ " ----------------------------------------");
+		LogType overallMonitorLogType = LogType.PASSED;
+		String overallMonitorMessage = null;
+
+		for (HttpRequestResult result : results) {
+			if (result.getType() == LogType.ERROR) {
+				overallMonitorLogType = LogType.ERROR;
+			} else if (result.getType() == LogType.FAILED
+					&& overallMonitorLogType != LogType.ERROR) {
+				overallMonitorLogType = LogType.FAILED;
+			}
+
+			if (result.getType() != LogType.PASSED) {
+				overallMonitorMessage = overallMonitorMessage == null ? result
+						.getMessage() : overallMonitorMessage + "\n"
+						+ result.getMessage();
+			}
+		}
+
+		// Send through one logMonitor result
+		this.eventManager.logMonitorResult(monitor, overallMonitorLogType,
+				overallMonitorMessage);
+
+		// log.info("finished checking " + this.monitor.getName()
+		// + " ----------------------------------------");
 	}
 
 	@Override
@@ -106,21 +131,22 @@ public class EndPointMonitorRunner extends MonitorRunner<EndPointMonitor> {
 		}
 	}
 
-	private void executeAndMonitorRequest(CloseableHttpClient client,
-			HttpRequestDefinition def, Map<String, String> headers) {
+	private HttpRequestResult executeAndMonitorRequest(
+			CloseableHttpClient client, HttpRequestDefinition def,
+			Map<String, String> headers) {
 		try {
 			log.debug("running request: " + def.getUrl());
 			executeRequest(client, def, headers);
 
-			eventManager.logMonitor(monitor, LogType.PASSED, null);
+			return new HttpRequestResult(LogType.PASSED, null);
 		} catch (AssertionFailedException e) {
-			eventManager.logMonitor(monitor, LogType.FAILED, e.getMessage());
+			return new HttpRequestResult(LogType.FAILED, e.getMessage());
 		} catch (URISyntaxException | IOException e) {
-			eventManager.logMonitor(monitor, LogType.ERROR, e.getMessage());
 			e.printStackTrace();
+			return new HttpRequestResult(LogType.ERROR, e.getMessage());
 		} catch (RuntimeException e) {
-			eventManager.logMonitor(monitor, LogType.ERROR, e.getMessage());
 			e.printStackTrace();
+			return new HttpRequestResult(LogType.ERROR, e.getMessage());
 		}
 	}
 
@@ -225,5 +251,24 @@ public class EndPointMonitorRunner extends MonitorRunner<EndPointMonitor> {
 			}
 		}
 		return builder.build();
+	}
+
+	class HttpRequestResult {
+		private LogType type;
+
+		private String message;
+
+		public HttpRequestResult(LogType type, String message) {
+			this.type = type;
+			this.message = message;
+		}
+
+		public LogType getType() {
+			return type;
+		}
+
+		public String getMessage() {
+			return message;
+		}
 	}
 }

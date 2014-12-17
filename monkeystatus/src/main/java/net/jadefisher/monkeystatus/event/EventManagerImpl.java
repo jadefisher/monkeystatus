@@ -24,7 +24,7 @@ public class EventManagerImpl implements EventManager {
 	private ServiceEventRepository serviceEventRepository;
 
 	@Override
-	public void logMonitor(Monitor monitor, LogType type, String message) {
+	public void logMonitorResult(Monitor monitor, LogType type, String message) {
 		// Record monitor reading
 		MonitorLogEntry logEntry = new MonitorLogEntry(monitor, message, type);
 		monitorLogRepository.create(logEntry);
@@ -42,14 +42,15 @@ public class EventManagerImpl implements EventManager {
 					serviceEventRepository.create(new ServiceEvent(monitor,
 							message));
 				} else if (currentEvent.getType() != ServiceEventType.PLANNED_OUTAGE) {
-					serviceEventRepository.registerFail(currentEvent, monitor,
-							message);
+					serviceEventRepository.registerMonitorFail(currentEvent,
+							monitor, message);
 				}
 				break;
 			case PASSED:
 				if (currentEvent != null
 						&& currentEvent.getType() != ServiceEventType.PLANNED_OUTAGE) {
-					serviceEventRepository.registerPass(currentEvent, monitor);
+					serviceEventRepository.registerMonitorPass(currentEvent,
+							monitor);
 				}
 				break;
 			default:

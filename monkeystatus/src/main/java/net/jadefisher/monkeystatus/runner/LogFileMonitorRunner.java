@@ -64,11 +64,13 @@ public class LogFileMonitorRunner extends MonitorRunner<LogFileMonitor>
 
 	@Override
 	public void handle(String line) {
+		long stablePeriodMillis = monitor.getRequiredStablePeriod() * 1000;
 		long now = System.currentTimeMillis();
 
 		for (Pattern pattern : patterns) {
 			if (pattern.matcher(line).matches()) {
-				eventManager.logMonitor(monitor, LogType.FAILED,
+				log.warn(monitor.getId() + " failed!");
+				eventManager.logMonitorResult(monitor, LogType.FAILED,
 						monitor.getLogFile() + " contained pattern match for "
 								+ pattern);
 				lastFailure = now;
@@ -77,9 +79,10 @@ public class LogFileMonitorRunner extends MonitorRunner<LogFileMonitor>
 
 		// We don't want to create 1000s of PASSED logs, but we do want to
 		// create them regularly
-		if ((now - lastFailure) > monitor.getRequiredStablePeriod()
-				&& (now - lastPass) > monitor.getRequiredStablePeriod()) {
-			eventManager.logMonitor(monitor, LogType.PASSED, null);
+		if ((now - lastFailure) > stablePeriodMillis
+				&& (now - lastPass) > stablePeriodMillis) {
+			log.warn(monitor.getId() + " passed!");
+			eventManager.logMonitorResult(monitor, LogType.PASSED, null);
 			lastPass = now;
 		}
 	}
@@ -90,7 +93,7 @@ public class LogFileMonitorRunner extends MonitorRunner<LogFileMonitor>
 
 	@Override
 	public void fileNotFound() {
-		this.eventManager.logMonitor(monitor, LogType.ERROR,
+		this.eventManager.logMonitorResult(monitor, LogType.ERROR,
 				"Couldn't find log file: " + this.monitor.getLogFile());
 	}
 
@@ -100,7 +103,7 @@ public class LogFileMonitorRunner extends MonitorRunner<LogFileMonitor>
 
 	@Override
 	public void handle(Exception ex) {
-		this.eventManager.logMonitor(monitor, LogType.ERROR,
+		this.eventManager.logMonitorResult(monitor, LogType.ERROR,
 				"Couldn't read log file: " + this.monitor.getLogFile());
 	}
 }
