@@ -43,4 +43,10 @@ public class ServiceController {
 			@PathVariable("serviceId") String serviceId) {
 		return serviceEventRepository.findByService(serviceId);
 	}
+
+	@RequestMapping(value = "/{serviceId}/currentEvent", method = RequestMethod.GET, produces = { "application/json" })
+	public @ResponseBody ServiceEvent getCurentEvent(
+			@PathVariable("serviceId") String serviceId) {
+		return serviceEventRepository.findCurrentEvent(serviceId);
+	}
 }
