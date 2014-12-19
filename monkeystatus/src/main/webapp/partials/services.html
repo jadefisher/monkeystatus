@@ -1,0 +1,12 @@
+<div class="row" data-ng-repeat="service in services">
+	<div class="col-md-12">
+		<div
+			data-ng-class="{'alert' : true, 'alert-success' : statusIsGood(service.id), 'alert-info' : statusIsInfo(service.id), 'alert-warning' : statusIsWarning(service.id), 'alert-danger' : statusIsBad(service.id)}">
+			<h3>{{service.name}}</h3>
+
+			<p>{{currentEvents[service.id].description}}</p>
+			<small><a href="#/serviceHistory?serviceId={{service.id}}">History</a></small>
+		</div>
+
+	</div>
+</div>

@@ -11,3 +11,34 @@
  **/
 
 var msServices = angular.module('msServices', ['ngResource']);
+
+
+msServices.factory('Service', ['$resource',
+function($resource) {
+    return $resource('api/services/:id', {}, {
+        query : {
+            method : 'GET',
+            params : {
+                id : ''
+            },
+            isArray : true
+        },
+        list : {
+            method : 'GET',
+            isArray : true
+        },
+        update : {
+            method : 'PUT',
+            isArray : false
+        },
+        currentEvent: {
+        	method: 'GET',
+        	url: 'api/services/:id/currentEvent'
+        },
+        events: {
+        	method : 'GET',
+        	url: 'api/services/:id/events',
+            isArray : true
+        }
+    });
+}]);

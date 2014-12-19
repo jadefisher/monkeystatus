@@ -27,6 +27,7 @@ public class ServiceEvent {
 		this();
 		this.serviceId = monitor.getServiceId();
 		this.description = message;
+		this.type = monitor.getServiceEventType();
 		this.associatedMonitors = new HashMap<String, Boolean>();
 		this.associatedMonitors.put(monitor.getId(), true);
 	}
