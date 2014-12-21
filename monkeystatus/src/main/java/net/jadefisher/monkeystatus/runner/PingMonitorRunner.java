@@ -7,7 +7,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import net.jadefisher.monkeystatus.event.EventManager;
-import net.jadefisher.monkeystatus.model.LogType;
+import net.jadefisher.monkeystatus.model.monitor.LogType;
 import net.jadefisher.monkeystatus.model.monitor.PingMonitor;
 
 import org.apache.commons.logging.Log;

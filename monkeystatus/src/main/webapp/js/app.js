@@ -2,7 +2,7 @@
 
 /* App Module */
 
-var msApp = angular.module('monkeyStatus', ['ngRoute', 'ngSanitize', 'ui.bootstrap', 'msControllers', 'msFilters', 'msServices', 'msDirectives']);
+var msApp = angular.module('monkeyStatus', ['ngRoute', 'ngSanitize', 'ui.bootstrap', 'ui.grid', 'ui.grid.edit', 'msControllers', 'msFilters', 'msServices', 'msDirectives']);
 
 msApp.config(['$routeProvider',
 function($routeProvider) {
@@ -25,4 +25,4 @@ function($routeProvider) {
 	}).otherwise({
 		redirectTo : '/home'
 	});
-}]); 
+}]);

@@ -1,10 +1,15 @@
+<ol class="breadcrumb">
+  <li><a href="#/home">Home</a></li>
+  <li class="active">Services</li>
+</ol>
+
 <div class="row" data-ng-repeat="service in services">
 	<div class="col-md-12">
 		<div
-			data-ng-class="{'alert' : true, 'alert-success' : statusIsGood(service.id), 'alert-info' : statusIsInfo(service.id), 'alert-warning' : statusIsWarning(service.id), 'alert-danger' : statusIsBad(service.id)}">
+			data-ng-class="{'alert' : true, 'alert-{{statusClass(service)}}' : true}">
 			<h3>{{service.name}}</h3>
 
-			<p>{{currentEvents[service.id].description}}</p>
+			<p>{{service.currentEvent.description}}</p>
 			<small><a href="#/serviceHistory?serviceId={{service.id}}">History</a></small>
 		</div>
 

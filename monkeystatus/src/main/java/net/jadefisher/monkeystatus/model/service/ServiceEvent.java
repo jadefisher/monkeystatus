@@ -1,4 +1,4 @@
-package net.jadefisher.monkeystatus.model.event;
+package net.jadefisher.monkeystatus.model.service;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -23,12 +23,19 @@ public class ServiceEvent {
 		this.startDate = new Date();
 	}
 
-	public ServiceEvent(Monitor monitor, String message) {
+	public ServiceEvent(Monitor monitor, String message, ServiceEvent oldEvent) {
 		this();
 		this.serviceId = monitor.getServiceId();
 		this.description = message;
 		this.type = monitor.getServiceEventType();
 		this.associatedMonitors = new HashMap<String, Boolean>();
+
+		if (oldEvent != null) {
+			for (Map.Entry<String, Boolean> assoc : oldEvent
+					.getAssociatedMonitors().entrySet()) {
+				this.associatedMonitors.put(assoc.getKey(), assoc.getValue());
+			}
+		}
 		this.associatedMonitors.put(monitor.getId(), true);
 	}
 

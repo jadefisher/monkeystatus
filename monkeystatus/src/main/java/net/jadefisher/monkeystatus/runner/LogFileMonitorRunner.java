@@ -9,8 +9,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import net.jadefisher.monkeystatus.event.EventManager;
-import net.jadefisher.monkeystatus.model.LogType;
 import net.jadefisher.monkeystatus.model.monitor.LogFileMonitor;
+import net.jadefisher.monkeystatus.model.monitor.LogType;
 
 import org.apache.commons.io.input.Tailer;
 import org.apache.commons.io.input.TailerListener;

@@ -31,13 +31,9 @@ function($resource) {
             method : 'PUT',
             isArray : false
         },
-        currentEvent: {
-        	method: 'GET',
-        	url: 'api/services/:id/currentEvent'
-        },
-        events: {
+        history: {
         	method : 'GET',
-        	url: 'api/services/:id/events',
+        	url: 'api/services/:id/history',
             isArray : true
         }
     });

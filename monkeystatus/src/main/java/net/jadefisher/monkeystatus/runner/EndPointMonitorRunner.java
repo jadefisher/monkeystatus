@@ -15,9 +15,9 @@ import java.util.concurrent.TimeUnit;
 
 import net.jadefisher.monkeystatus.event.EventManager;
 import net.jadefisher.monkeystatus.exception.AssertionFailedException;
-import net.jadefisher.monkeystatus.model.LogType;
 import net.jadefisher.monkeystatus.model.monitor.EndPointMonitor;
 import net.jadefisher.monkeystatus.model.monitor.HttpRequestDefinition;
+import net.jadefisher.monkeystatus.model.monitor.LogType;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
@@ -112,9 +112,12 @@ public class EndPointMonitorRunner extends MonitorRunner<EndPointMonitor> {
 		}
 
 		// Send through one logMonitor result
-		this.eventManager.logMonitorResult(monitor, overallMonitorLogType,
-				overallMonitorMessage);
-
+		try {
+			this.eventManager.logMonitorResult(monitor, overallMonitorLogType,
+					overallMonitorMessage);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		// log.info("finished checking " + this.monitor.getName()
 		// + " ----------------------------------------");
 	}

@@ -5,16 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.jadefisher.monkeystatus.model.MonitorLogEntry;
+import net.jadefisher.monkeystatus.model.service.MonitorLogEntry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class MonitorLogRepositoryImpl implements MonitorLogRepository {
+public class MonitorHistoryRepositoryImpl implements MonitorHistoryRepository {
 	private static final Log log = LogFactory
-			.getLog(MonitorLogRepositoryImpl.class);
+			.getLog(MonitorHistoryRepositoryImpl.class);
 
 	private Map<String, List<MonitorLogEntry>> entriesByServiceId = new HashMap<String, List<MonitorLogEntry>>();
 

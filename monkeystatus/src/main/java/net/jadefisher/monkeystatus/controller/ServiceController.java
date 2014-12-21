@@ -2,9 +2,9 @@ package net.jadefisher.monkeystatus.controller;
 
 import java.util.List;
 
-import net.jadefisher.monkeystatus.model.Service;
-import net.jadefisher.monkeystatus.model.event.ServiceEvent;
-import net.jadefisher.monkeystatus.respository.ServiceEventRepository;
+import net.jadefisher.monkeystatus.model.service.Service;
+import net.jadefisher.monkeystatus.model.service.ServiceEvent;
+import net.jadefisher.monkeystatus.respository.EventHistoryRepository;
 import net.jadefisher.monkeystatus.respository.ServiceRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ public class ServiceController {
 	private ServiceRepository serviceRepository;
 
 	@Autowired
-	private ServiceEventRepository serviceEventRepository;
+	private EventHistoryRepository eventHistoryRepository;
 
 	public ServiceController() {
 		System.out.println("starting up");
@@ -38,15 +38,9 @@ public class ServiceController {
 		return serviceRepository.find(serviceId);
 	}
 
-	@RequestMapping(value = "/{serviceId}/events", method = RequestMethod.GET, produces = { "application/json" })
+	@RequestMapping(value = "/{serviceId}/history", method = RequestMethod.GET, produces = { "application/json" })
 	public @ResponseBody List<ServiceEvent> listEvents(
 			@PathVariable("serviceId") String serviceId) {
-		return serviceEventRepository.findByService(serviceId);
-	}
-
-	@RequestMapping(value = "/{serviceId}/currentEvent", method = RequestMethod.GET, produces = { "application/json" })
-	public @ResponseBody ServiceEvent getCurentEvent(
-			@PathVariable("serviceId") String serviceId) {
-		return serviceEventRepository.findCurrentEvent(serviceId);
+		return eventHistoryRepository.findByService(serviceId);
 	}
 }

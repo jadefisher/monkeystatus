@@ -21,6 +21,8 @@
 		<tomcat.version>7.0.56</tomcat.version>
 		<junit.version>4.11</junit.version>
 		<jackson.version>2.4.4</jackson.version>
+		<javax.mail.version>1.4.7</javax.mail.version>
+		<guava.version>18.0</guava.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -90,7 +92,16 @@
 			<artifactId>jackson-annotations</artifactId>
 			<version>${jackson.version}</version>
 		</dependency>
-
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>${javax.mail.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${guava.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

@@ -1,8 +1,9 @@
-package net.jadefisher.monkeystatus.model;
+package net.jadefisher.monkeystatus.model.service;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
+import net.jadefisher.monkeystatus.model.monitor.LogType;
 import net.jadefisher.monkeystatus.model.monitor.Monitor;
 
 public class MonitorLogEntry {
@@ -12,7 +13,7 @@ public class MonitorLogEntry {
 
 	private LogType logType;
 
-	private List<String> tags;
+	private Set<String> tags;
 
 	private Date createdDate;
 
@@ -55,11 +56,11 @@ public class MonitorLogEntry {
 		this.monitorId = monitorId;
 	}
 
-	public List<String> getTags() {
+	public Set<String> getTags() {
 		return tags;
 	}
 
-	public void setTags(List<String> tags) {
+	public void setTags(Set<String> tags) {
 		this.tags = tags;
 	}
 
