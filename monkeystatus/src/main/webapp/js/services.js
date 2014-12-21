@@ -16,13 +16,6 @@ var msServices = angular.module('msServices', ['ngResource']);
 msServices.factory('Service', ['$resource',
 function($resource) {
     return $resource('api/services/:id', {}, {
-        query : {
-            method : 'GET',
-            params : {
-                id : ''
-            },
-            isArray : true
-        },
         list : {
             method : 'GET',
             isArray : true
@@ -34,6 +27,24 @@ function($resource) {
         history: {
         	method : 'GET',
         	url: 'api/services/:id/history',
+            isArray : true
+        }
+    });
+}]);
+msServices.factory('Monitor', ['$resource',
+function($resource) {
+    return $resource('api/monitors/:id', {}, {
+        list : {
+            method : 'GET',
+            isArray : true
+        },
+        update : {
+            method : 'PUT',
+            isArray : false
+        },
+        history: {
+        	method : 'GET',
+        	url: 'api/monitors/:id/history',
             isArray : true
         }
     });

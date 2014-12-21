@@ -103,10 +103,39 @@ function($scope, $location, $timeout, Service) {
 	};
 }]);
 
-msControllers.controller('MonitorsCtrl', ['$scope', '$http',
-function($scope, $http) {
-	//na
+msControllers.controller('MonitorsCtrl', ['$scope', '$http', '$timeout', 'Service',
+function($scope, $http, $timeout, Service) {
+
+	function updateMonitors() {
+		$scope.monitors = Monitor.list(null, null, function(response) {
+			console.log("got: " + response);
+			
+			$timeout(updateMonitors, 30000);
+		}, function(response) {
+			console.log("failed to get services");
+		});
+	};
+	updateMonitors();
+
+	$scope.statusClass = function(service) {
+		if (!service.currentEvent) {
+			return "success";
+		}
+		switch (service.currentEvent.type) {
+		case 'PLANNED_OUTAGE':
+		case 'INFORMATIONAL':
+			return "info";
+		case 'UNPLANNED_PARTIAL_OUTAGE':
+		case 'INTERMITTENT_OUTAGE':
+			return 'warning';
+		case 'UNPLANNED_FULL_OUTAGE':
+			return 'danger';
+		default:
+			return 'danger';
+		}
+	};
 }]);
+
 
 msControllers.controller('MonitorHistoryCtrl', ['$scope', '$http',
 function($scope, $http) {

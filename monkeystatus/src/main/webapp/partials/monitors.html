@@ -1,0 +1,16 @@
+<ol class="breadcrumb">
+  <li><a href="#/home">Home</a></li>
+  <li class="active">Monitors</li>
+</ol>
+
+<h2>End Point Monitors</h2>
+<div class="row" data-ng-repeat="monitor in endPointMonitors">
+	<div class="col-md-12">
+		<div
+			data-ng-class="{'alert' : true, 'alert-{{statusClass(monitor)}}' : true}">
+			<h3>{{monitor.name}}</h3>
+			<small><a href="#/monitorHistory?monitorId={{monitor.id}}">History</a></small>
+		</div>
+
+	</div>
+</div>
