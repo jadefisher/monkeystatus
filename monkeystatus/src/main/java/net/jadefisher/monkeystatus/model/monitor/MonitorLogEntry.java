@@ -1,10 +1,7 @@
-package net.jadefisher.monkeystatus.model.service;
+package net.jadefisher.monkeystatus.model.monitor;
 
 import java.util.Date;
 import java.util.Set;
-
-import net.jadefisher.monkeystatus.model.monitor.LogType;
-import net.jadefisher.monkeystatus.model.monitor.Monitor;
 
 public class MonitorLogEntry {
 	private String serviceId;

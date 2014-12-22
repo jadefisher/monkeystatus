@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 import net.jadefisher.monkeystatus.event.EventManager;
 import net.jadefisher.monkeystatus.model.monitor.LogType;
 import net.jadefisher.monkeystatus.model.monitor.TelnetMonitor;
+import net.jadefisher.monkeystatus.respository.ServiceRepository;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,8 +22,9 @@ public class TelnetMonitorRunner extends MonitorRunner<TelnetMonitor> {
 	private EventManager eventManager;
 	private ScheduledExecutorService executorService;
 
-	public TelnetMonitorRunner(ScheduledExecutorService executorService,
-			TelnetMonitor monitor) {
+	public TelnetMonitorRunner(ServiceRepository serviceReop,
+			ScheduledExecutorService executorService, TelnetMonitor monitor) {
+		super(serviceReop);
 		this.executorService = executorService;
 		this.monitor = monitor;
 	}
@@ -42,6 +44,13 @@ public class TelnetMonitorRunner extends MonitorRunner<TelnetMonitor> {
 	}
 
 	private void runMonitor() {
+
+		if (!monitorServiceNow(monitor.getServiceId())) {
+			log.info("Skipping monitoring " + monitor.getId()
+					+ " as now is a maintenance window");
+			return;
+		}
+
 		Socket socket = new Socket();
 		try {
 			socket.connect(new InetSocketAddress(this.monitor.getTargetHost(),

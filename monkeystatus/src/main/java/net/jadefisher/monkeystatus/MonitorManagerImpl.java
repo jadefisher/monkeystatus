@@ -14,6 +14,7 @@ import net.jadefisher.monkeystatus.model.monitor.Monitor;
 import net.jadefisher.monkeystatus.model.monitor.PingMonitor;
 import net.jadefisher.monkeystatus.model.monitor.TelnetMonitor;
 import net.jadefisher.monkeystatus.respository.MonitorRepository;
+import net.jadefisher.monkeystatus.respository.ServiceRepository;
 import net.jadefisher.monkeystatus.runner.EndPointMonitorRunner;
 import net.jadefisher.monkeystatus.runner.LogFileMonitorRunner;
 import net.jadefisher.monkeystatus.runner.MonitorRunner;
@@ -32,6 +33,9 @@ public class MonitorManagerImpl implements MonitorManager {
 
 	@Autowired
 	private MonitorRepository monitorRepository;
+
+	@Autowired
+	private ServiceRepository serviceRepo;
 
 	@Autowired
 	private EventManager eventManager;
@@ -54,17 +58,17 @@ public class MonitorManagerImpl implements MonitorManager {
 		for (Monitor monitor : monitors) {
 			MonitorRunner<?> runner = null;
 			if (monitor instanceof EndPointMonitor) {
-				runner = new EndPointMonitorRunner(cmgr,
+				runner = new EndPointMonitorRunner(serviceRepo, cmgr,
 						scheduledExecutorService, (EndPointMonitor) monitor);
 			} else if (monitor instanceof LogFileMonitor) {
-				runner = new LogFileMonitorRunner(scheduledExecutorService,
-						(LogFileMonitor) monitor);
+				runner = new LogFileMonitorRunner(serviceRepo,
+						scheduledExecutorService, (LogFileMonitor) monitor);
 			} else if (monitor instanceof TelnetMonitor) {
-				runner = new TelnetMonitorRunner(scheduledExecutorService,
-						(TelnetMonitor) monitor);
+				runner = new TelnetMonitorRunner(serviceRepo,
+						scheduledExecutorService, (TelnetMonitor) monitor);
 			} else if (monitor instanceof PingMonitor) {
-				runner = new PingMonitorRunner(scheduledExecutorService,
-						(PingMonitor) monitor);
+				runner = new PingMonitorRunner(serviceRepo,
+						scheduledExecutorService, (PingMonitor) monitor);
 			}
 
 			if (runner != null) {

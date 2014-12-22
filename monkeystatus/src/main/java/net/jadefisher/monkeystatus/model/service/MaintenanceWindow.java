@@ -1,15 +1,14 @@
 package net.jadefisher.monkeystatus.model.service;
 
 import java.time.DayOfWeek;
-import java.time.LocalTime;
 import java.util.Set;
 
 public class MaintenanceWindow {
 	private Set<DayOfWeek> daysOfWeek;
 
-	private LocalTime start;
+	private TimeOfDay start;
 
-	private LocalTime end;
+	private TimeOfDay end;
 
 	public Set<DayOfWeek> getDaysOfWeek() {
 		return daysOfWeek;
@@ -19,19 +18,19 @@ public class MaintenanceWindow {
 		this.daysOfWeek = daysOfWeek;
 	}
 
-	public LocalTime getStart() {
+	public TimeOfDay getStart() {
 		return start;
 	}
 
-	public void setStart(LocalTime start) {
+	public void setStart(TimeOfDay start) {
 		this.start = start;
 	}
 
-	public LocalTime getEnd() {
+	public TimeOfDay getEnd() {
 		return end;
 	}
 
-	public void setEnd(LocalTime end) {
+	public void setEnd(TimeOfDay end) {
 		this.end = end;
 	}
 }

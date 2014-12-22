@@ -3,7 +3,7 @@ package net.jadefisher.monkeystatus.controller;
 import java.util.List;
 
 import net.jadefisher.monkeystatus.model.monitor.Monitor;
-import net.jadefisher.monkeystatus.model.service.MonitorLogEntry;
+import net.jadefisher.monkeystatus.model.monitor.MonitorLogEntry;
 import net.jadefisher.monkeystatus.respository.MonitorHistoryRepository;
 import net.jadefisher.monkeystatus.respository.MonitorRepository;
 
@@ -39,6 +39,12 @@ public class MonitorController {
 	public @ResponseBody Monitor getMonitor(
 			@PathVariable("monitorId") String monitorId) {
 		return monitorRepository.find(monitorId);
+	}
+
+	@RequestMapping(value = "/{monitorId}/mostRecent", method = RequestMethod.GET, produces = { "application/json" })
+	public @ResponseBody MonitorLogEntry getMostRecentMonitorLog(
+			@PathVariable("monitorId") String monitorId) {
+		return monitorLogRepository.findMostRecentByMonitor(monitorId);
 	}
 
 	@RequestMapping(value = "/{monitorId}/history", method = RequestMethod.GET, produces = { "application/json" })

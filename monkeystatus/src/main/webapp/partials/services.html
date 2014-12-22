@@ -1,6 +1,6 @@
 <ol class="breadcrumb">
-  <li><a href="#/home">Home</a></li>
-  <li class="active">Services</li>
+	<li><a href="#/home">Home</a></li>
+	<li class="active">Services</li>
 </ol>
 
 <div class="row" data-ng-repeat="service in services">
@@ -9,8 +9,23 @@
 			data-ng-class="{'alert' : true, 'alert-{{statusClass(service)}}' : true}">
 			<h3>{{service.name}}</h3>
 
-			<p>{{service.currentEvent.description}}</p>
-			<small><a href="#/serviceHistory?serviceId={{service.id}}">History</a></small>
+			<div ng-if="service.currentEvent">
+				<dl class="dl-horizontal">
+					<dt>Event Type</dt>
+					<dd>{{service.currentEvent.type}}</dd>
+					<dt>Description</dt>
+					<dd>{{service.currentEvent.description}}</dd>
+					<dt>Start Time</dt>
+					<dd>{{service.currentEvent.startDate | date: dateformat}}</dd>
+				</dl>
+			</div>
+
+			<p class="pull-right">
+				<a href="#/monitors?serviceId={{service.id}}">Monitors</a> 
+				| <a
+					href="#/serviceHistory?serviceId={{service.id}}">History</a>
+			</p>
+			<br />
 		</div>
 
 	</div>

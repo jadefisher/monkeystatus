@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.jadefisher.monkeystatus.model.service.MonitorLogEntry;
+import net.jadefisher.monkeystatus.model.monitor.MonitorLogEntry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -53,5 +53,11 @@ public class MonitorHistoryRepositoryImpl implements MonitorHistoryRepository {
 	@Override
 	public List<MonitorLogEntry> findByMonitor(String monitorId) {
 		return entriesByMonitorId.get(monitorId);
+	}
+
+	@Override
+	public MonitorLogEntry findMostRecentByMonitor(String monitorId) {
+		return entriesByMonitorId.containsKey(monitorId) ? entriesByMonitorId
+				.get(monitorId).get(0) : null;
 	}
 }

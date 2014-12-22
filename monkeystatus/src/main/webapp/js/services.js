@@ -31,6 +31,7 @@ function($resource) {
         }
     });
 }]);
+
 msServices.factory('Monitor', ['$resource',
 function($resource) {
     return $resource('api/monitors/:id', {}, {
@@ -41,6 +42,10 @@ function($resource) {
         update : {
             method : 'PUT',
             isArray : false
+        },
+        mostRecent: {
+        	method : 'GET',
+        	url: 'api/monitors/:id/mostRecent'
         },
         history: {
         	method : 'GET',

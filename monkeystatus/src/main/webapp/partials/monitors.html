@@ -1,16 +1,249 @@
 <ol class="breadcrumb">
-  <li><a href="#/home">Home</a></li>
-  <li class="active">Monitors</li>
+	<li>
+		<a href="#/home">Home</a>
+	</li>
+	<li data-ng-if="serviceId">
+		<a href="#/services">Services</a>
+	</li>
+	<li data-ng-if="serviceId">
+		{{serviceId}}
+	</li>
+	<li class="active">
+		Monitors
+	</li>
 </ol>
 
-<h2>End Point Monitors</h2>
+<h2 data-ng-if="endPointMonitors.length > 0">End Point Monitors</h2>
 <div class="row" data-ng-repeat="monitor in endPointMonitors">
 	<div class="col-md-12">
-		<div
-			data-ng-class="{'alert' : true, 'alert-{{statusClass(monitor)}}' : true}">
-			<h3>{{monitor.name}}</h3>
-			<small><a href="#/monitorHistory?monitorId={{monitor.id}}">History</a></small>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">{{monitor.name}}</h3>
+			</div>
+			<div class="panel-body">
+				<dl class="dl-horizontal">
+					<dt>
+						Most Recent Result
+					</dt>
+					<dd ng-if="mostRecentStates[monitor.id].logType!='PASSED'">
+						<span class="label label-danger">{{mostRecentStates[monitor.id].logType}}</span>
+					</dd>
+					<dd ng-if="mostRecentStates[monitor.id].logType=='PASSED'">
+						<span class="label label-success">{{mostRecentStates[monitor.id].logType}}</span>
+					</dd>
+					<dt>
+						Service Event Type
+					</dt>
+					<dd>
+						{{monitor.serviceEventType}}
+					</dd>
+					<dt>
+						Service Id
+					</dt>
+					<dd>
+						{{monitor.serviceId}}
+					</dd>
+					<dt>
+						Tags
+					</dt>
+					<dd>
+						<span data-ng-repeat="tag in monitor.tags"> <span class="label label-default"> {{tag}} </span> &nbsp; </span>
+					</dd>
+					<dt>
+						Poll Rate
+					</dt>
+					<dd>
+						{{monitor.pollRate}}
+					</dd>
+					<dt>
+						Requests
+					</dt>
+					<dd>
+						<table class="table">
+							<thead>
+								<tr>
+									<th>Method</th>
+									<th>URL</th>
+								</tr>
+							</thead>
+							<tr data-ng-repeat="request in monitor.requests">
+								<td>{{request.method}}</td>
+								<td>{{request.url}}</td>
+							</tr>
+						</table>
+					</dd>
+				</dl>
+				<small><a class="pull-right" href="#/monitorHistory?monitorId={{monitor.id}}">History</a></small>
+			</div>
 		</div>
 
+	</div>
+</div>
+
+<h2 data-ng-if="logFileMonitors.length > 0">Log File Monitors</h2>
+<div class="row" data-ng-repeat="monitor in logFileMonitors">
+	<div class="col-md-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">{{monitor.name}}</h3>
+			</div>
+			<div class="panel-body">
+				<dl class="dl-horizontal">
+					<dt>
+						Most Recent Result
+					</dt>
+					<dd ng-if="mostRecentStates[monitor.id].logType!='PASSED'">
+						<span class="label label-danger">{{mostRecentStates[monitor.id].logType}}</span>
+					</dd>
+					<dd ng-if="mostRecentStates[monitor.id].logType=='PASSED'">
+						<span class="label label-success">{{mostRecentStates[monitor.id].logType}}</span>
+					</dd>
+					<dt>
+						Service Event Type
+					</dt>
+					<dd>
+						{{monitor.serviceEventType}}
+					</dd>
+					<dt>
+						Service Id
+					</dt>
+					<dd>
+						{{monitor.serviceId}}
+					</dd>
+					<dt>
+						Tags
+					</dt>
+					<dd>
+						<span data-ng-repeat="tag in monitor.tags"> <span class="label label-default"> {{tag}} </span> &nbsp; </span>
+					</dd>
+					<dt>
+						Log File
+					</dt>
+					<dd>
+						{{monitor.logFile}}
+					</dd>
+					<dt>
+						Patterns
+					</dt>
+					<dd>
+						<span data-ng-repeat="ptn in monitor.patterns"> <span class="label label-default"> {{ptn}} </span> &nbsp; </span>
+					</dd>
+				</dl>
+				<small><a class="pull-right" href="#/monitorHistory?monitorId={{monitor.id}}">History</a></small>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+<h2 data-ng-if="pingMonitors.length > 0">Ping Monitors</h2>
+<div class="row" data-ng-repeat="monitor in pingMonitors">
+	<div class="col-md-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">{{monitor.name}}</h3>
+			</div>
+			<div class="panel-body">
+				<dl class="dl-horizontal">
+					<dt>
+						Most Recent Result
+					</dt>
+					<dd ng-if="mostRecentStates[monitor.id].logType!='PASSED'">
+						<span class="label label-danger">{{mostRecentStates[monitor.id].logType}}</span>
+					</dd>
+					<dd ng-if="mostRecentStates[monitor.id].logType=='PASSED'">
+						<span class="label label-success">{{mostRecentStates[monitor.id].logType}}</span>
+					</dd>
+					<dt>
+						Service Event Type
+					</dt>
+					<dd>
+						{{monitor.serviceEventType}}
+					</dd>
+					<dt>
+						Service Id
+					</dt>
+					<dd>
+						{{monitor.serviceId}}
+					</dd>
+					<dt>
+						Tags
+					</dt>
+					<dd>
+						<span data-ng-repeat="tag in monitor.tags"> <span class="label label-default"> {{tag}} </span> &nbsp; </span>
+					</dd>
+					<dt>
+						Host
+					</dt>
+					<dd>
+						{{monitor.targetHost}}
+					</dd>
+					<dt>
+						Ping timeout
+					</dt>
+					<dd>
+						{{monitor.pingTimeout}}
+					</dd>
+				</dl>
+				<small><a class="pull-right" href="#/monitorHistory?monitorId={{monitor.id}}">History</a></small>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+<h2 data-ng-if="telnetMonitors.length > 0">Telnet Monitors</h2>
+<div class="row" data-ng-repeat="monitor in telnetMonitors">
+	<div class="col-md-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">{{monitor.name}} </h3>
+			</div>
+			<div class="panel-body">
+				<dl class="dl-horizontal">
+					<dt>
+						Most Recent Result
+					</dt>
+					<dd ng-if="mostRecentStates[monitor.id].logType!='PASSED'">
+						<span class="label label-danger">{{mostRecentStates[monitor.id].logType}}</span>
+					</dd>
+					<dd ng-if="mostRecentStates[monitor.id].logType=='PASSED'">
+						<span class="label label-success">{{mostRecentStates[monitor.id].logType}}</span>
+					</dd>
+					<dt>
+						Service Event Type
+					</dt>
+					<dd>
+						{{monitor.serviceEventType}}
+					</dd>
+					<dt>
+						Service Id
+					</dt>
+					<dd>
+						{{monitor.serviceId}}
+					</dd>
+					<dt>
+						Tags
+					</dt>
+					<dd>
+						<span data-ng-repeat="tag in monitor.tags"> <span class="label label-default"> {{tag}} </span> &nbsp; </span>
+					</dd>
+					<dt>
+						Host
+					</dt>
+					<dd>
+						{{monitor.targetHost}}
+					</dd>
+					<dt>
+						Port
+					</dt>
+					<dd>
+						{{monitor.targetPort}}
+					</dd>
+				</dl>
+				<small><a class="pull-right" href="#/monitorHistory?monitorId={{monitor.id}}">History</a></small>
+
+			</div>
+		</div>
 	</div>
 </div>

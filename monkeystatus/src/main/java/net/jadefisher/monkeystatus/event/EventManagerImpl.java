@@ -3,7 +3,7 @@ package net.jadefisher.monkeystatus.event;
 import net.jadefisher.monkeystatus.alert.AlertManager;
 import net.jadefisher.monkeystatus.model.monitor.LogType;
 import net.jadefisher.monkeystatus.model.monitor.Monitor;
-import net.jadefisher.monkeystatus.model.service.MonitorLogEntry;
+import net.jadefisher.monkeystatus.model.monitor.MonitorLogEntry;
 import net.jadefisher.monkeystatus.model.service.Service;
 import net.jadefisher.monkeystatus.model.service.ServiceEvent;
 import net.jadefisher.monkeystatus.model.service.ServiceEventType;

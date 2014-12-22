@@ -18,6 +18,7 @@ import net.jadefisher.monkeystatus.exception.AssertionFailedException;
 import net.jadefisher.monkeystatus.model.monitor.EndPointMonitor;
 import net.jadefisher.monkeystatus.model.monitor.HttpRequestDefinition;
 import net.jadefisher.monkeystatus.model.monitor.LogType;
+import net.jadefisher.monkeystatus.respository.ServiceRepository;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
@@ -43,8 +44,10 @@ public class EndPointMonitorRunner extends MonitorRunner<EndPointMonitor> {
 	private CloseableHttpClient httpclient;
 	private BasicCookieStore cookieStore;
 
-	public EndPointMonitorRunner(PoolingHttpClientConnectionManager cmgr,
+	public EndPointMonitorRunner(ServiceRepository serviceReop,
+			PoolingHttpClientConnectionManager cmgr,
 			ScheduledExecutorService executorService, EndPointMonitor monitor) {
+		super(serviceReop);
 		this.cmgr = cmgr;
 		this.executorService = executorService;
 		this.monitor = monitor;
@@ -62,6 +65,13 @@ public class EndPointMonitorRunner extends MonitorRunner<EndPointMonitor> {
 	}
 
 	private void runMonitor() {
+
+		if (!monitorServiceNow(monitor.getServiceId())) {
+			log.info("Skipping monitoring " + monitor.getId()
+					+ " as now is a maintenance window");
+			return;
+		}
+
 		// log.info("Checking monitor: " + this.monitor.getName()
 		// + " ----------------------------------------");
 
@@ -106,7 +116,7 @@ public class EndPointMonitorRunner extends MonitorRunner<EndPointMonitor> {
 
 			if (result.getType() != LogType.PASSED) {
 				overallMonitorMessage = overallMonitorMessage == null ? result
-						.getMessage() : overallMonitorMessage + "\n"
+						.getMessage() : overallMonitorMessage + ", "
 						+ result.getMessage();
 			}
 		}
@@ -143,7 +153,8 @@ public class EndPointMonitorRunner extends MonitorRunner<EndPointMonitor> {
 
 			return new HttpRequestResult(LogType.PASSED, null);
 		} catch (AssertionFailedException e) {
-			return new HttpRequestResult(LogType.FAILED, e.getMessage());
+			return new HttpRequestResult(LogType.FAILED, e.getMessage()
+					+ " for " + def.getUrl());
 		} catch (URISyntaxException | IOException e) {
 			e.printStackTrace();
 			return new HttpRequestResult(LogType.ERROR, e.getMessage());

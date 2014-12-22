@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 import net.jadefisher.monkeystatus.event.EventManager;
 import net.jadefisher.monkeystatus.model.monitor.LogType;
 import net.jadefisher.monkeystatus.model.monitor.PingMonitor;
+import net.jadefisher.monkeystatus.respository.ServiceRepository;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,8 +21,9 @@ public class PingMonitorRunner extends MonitorRunner<PingMonitor> {
 	private EventManager eventManager;
 	private ScheduledExecutorService executorService;
 
-	public PingMonitorRunner(ScheduledExecutorService executorService,
-			PingMonitor monitor) {
+	public PingMonitorRunner(ServiceRepository serviceReop,
+			ScheduledExecutorService executorService, PingMonitor monitor) {
+		super(serviceReop);
 		this.executorService = executorService;
 		this.monitor = monitor;
 	}
@@ -29,7 +31,8 @@ public class PingMonitorRunner extends MonitorRunner<PingMonitor> {
 	@Override
 	public void startMonitoring(EventManager eventManager) {
 		this.eventManager = eventManager;
-		log.info("Monitoring " + this.monitor.getTargetHost());
+		log.info("Skipping monitoring " + monitor.getId()
+				+ " as now is a maintenance window");
 		this.future = executorService.scheduleAtFixedRate(this::runMonitor, 5,
 				20, TimeUnit.SECONDS);
 	}
@@ -40,6 +43,12 @@ public class PingMonitorRunner extends MonitorRunner<PingMonitor> {
 	}
 
 	private void runMonitor() {
+
+		if (!monitorServiceNow(monitor.getServiceId())) {
+			log.info("Skipping monitoring as now is a maintenance window");
+			return;
+		}
+
 		try {
 			InetAddress.getByName(monitor.getTargetHost()).isReachable(
 					monitor.getPingTimeout());

@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import net.jadefisher.monkeystatus.event.EventManager;
 import net.jadefisher.monkeystatus.model.monitor.LogFileMonitor;
 import net.jadefisher.monkeystatus.model.monitor.LogType;
+import net.jadefisher.monkeystatus.respository.ServiceRepository;
 
 import org.apache.commons.io.input.Tailer;
 import org.apache.commons.io.input.TailerListener;
@@ -30,8 +31,9 @@ public class LogFileMonitorRunner extends MonitorRunner<LogFileMonitor>
 	private long lastFailure;
 	private long lastPass;
 
-	public LogFileMonitorRunner(ScheduledExecutorService executorService,
-			LogFileMonitor monitor) {
+	public LogFileMonitorRunner(ServiceRepository serviceReop,
+			ScheduledExecutorService executorService, LogFileMonitor monitor) {
+		super(serviceReop);
 		this.executorService = executorService;
 		this.monitor = monitor;
 		this.patterns = new ArrayList<Pattern>();
@@ -64,6 +66,13 @@ public class LogFileMonitorRunner extends MonitorRunner<LogFileMonitor>
 
 	@Override
 	public void handle(String line) {
+
+		if (!monitorServiceNow(monitor.getServiceId())) {
+			log.info("Skipping monitoring " + monitor.getId()
+					+ " as now is a maintenance window");
+			return;
+		}
+
 		long stablePeriodMillis = monitor.getRequiredStablePeriod() * 1000;
 		long now = System.currentTimeMillis();
 
@@ -93,6 +102,12 @@ public class LogFileMonitorRunner extends MonitorRunner<LogFileMonitor>
 
 	@Override
 	public void fileNotFound() {
+
+		if (!monitorServiceNow(monitor.getServiceId())) {
+			log.info("Skipping monitoring as now is a maintenance window");
+			return;
+		}
+
 		this.eventManager.logMonitorResult(monitor, LogType.ERROR,
 				"Couldn't find log file: " + this.monitor.getLogFile());
 	}
@@ -103,6 +118,12 @@ public class LogFileMonitorRunner extends MonitorRunner<LogFileMonitor>
 
 	@Override
 	public void handle(Exception ex) {
+
+		if (!monitorServiceNow(monitor.getServiceId())) {
+			log.info("Skipping monitoring as now is a maintenance window");
+			return;
+		}
+
 		this.eventManager.logMonitorResult(monitor, LogType.ERROR,
 				"Couldn't read log file: " + this.monitor.getLogFile());
 	}
