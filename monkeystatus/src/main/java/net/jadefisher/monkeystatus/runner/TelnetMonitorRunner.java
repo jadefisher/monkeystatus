@@ -8,7 +8,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import net.jadefisher.monkeystatus.event.EventManager;
-import net.jadefisher.monkeystatus.model.monitor.LogType;
+import net.jadefisher.monkeystatus.model.monitor.RecordingType;
 import net.jadefisher.monkeystatus.model.monitor.TelnetMonitor;
 import net.jadefisher.monkeystatus.respository.ServiceRepository;
 
@@ -45,8 +45,8 @@ public class TelnetMonitorRunner extends MonitorRunner<TelnetMonitor> {
 
 	private void runMonitor() {
 
-		if (!monitorServiceNow(monitor.getServiceId())) {
-			log.info("Skipping monitoring " + monitor.getId()
+		if (!monitorServiceNow(monitor.getServiceKey())) {
+			log.info("Skipping monitoring " + monitor.getKey()
 					+ " as now is a maintenance window");
 			return;
 		}
@@ -55,11 +55,11 @@ public class TelnetMonitorRunner extends MonitorRunner<TelnetMonitor> {
 		try {
 			socket.connect(new InetSocketAddress(this.monitor.getTargetHost(),
 					this.monitor.getTargetPort()));
-			eventManager.logMonitorResult(monitor, LogType.PASSED,
+			eventManager.logMonitorResult(monitor, RecordingType.PASSED,
 					"Connection okay to " + monitor.getTargetHost() + ":"
 							+ monitor.getTargetPort());
 		} catch (IOException e) {
-			eventManager.logMonitorResult(monitor, LogType.FAILED,
+			eventManager.logMonitorResult(monitor, RecordingType.FAILED,
 					"Connection refused to " + monitor.getTargetHost() + ":"
 							+ monitor.getTargetPort());
 		} finally {

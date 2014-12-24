@@ -1,5 +1,5 @@
 package net.jadefisher.monkeystatus.model.monitor;
 
-public enum LogType {
+public enum RecordingType {
 	ERROR, FAILED, PASSED
 }

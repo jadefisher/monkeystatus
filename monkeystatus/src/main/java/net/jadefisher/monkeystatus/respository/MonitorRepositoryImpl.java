@@ -52,10 +52,10 @@ public class MonitorRepositoryImpl implements MonitorRepository {
 	}
 
 	@Override
-	public Monitor find(String monitorId) {
+	public Monitor find(String monitorKey) {
 		if (this.monitors != null) {
 			for (Monitor monitor : this.monitors) {
-				if (monitor.getId().equals(monitorId))
+				if (monitor.getKey().equals(monitorKey))
 					return monitor;
 			}
 		}
@@ -63,11 +63,11 @@ public class MonitorRepositoryImpl implements MonitorRepository {
 	}
 
 	@Override
-	public List<Monitor> findByService(String serviceId) {
+	public List<Monitor> findByService(String serviceKey) {
 		List<Monitor> serviceMonitors = new ArrayList<Monitor>();
 		if (this.monitors != null) {
 			for (Monitor monitor : this.monitors) {
-				if (monitor.getServiceId().equals(serviceId))
+				if (monitor.getServiceKey().equals(serviceKey))
 					serviceMonitors.add(monitor);
 			}
 		}

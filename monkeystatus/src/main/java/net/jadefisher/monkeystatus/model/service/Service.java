@@ -2,8 +2,15 @@ package net.jadefisher.monkeystatus.model.service;
 
 import java.util.Set;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection = "services")
 public class Service {
-	private String id;
+	@Id
+	private String docId;
+
+	private String key;
 
 	private String name;
 
@@ -13,12 +20,20 @@ public class Service {
 
 	private Set<MaintenanceWindow> maintenanceWindows;
 
-	public String getId() {
-		return id;
+	public String getDocId() {
+		return docId;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setDocId(String docId) {
+		this.docId = docId;
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
 	}
 
 	public String getName() {

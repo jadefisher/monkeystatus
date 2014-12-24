@@ -47,15 +47,15 @@ function($scope, $http, $timeout, Service) {
 
 msControllers.controller('serviceHistoryCtrl', ['$scope', '$location', '$timeout', 'Service',
 function($scope, $location, $timeout, Service) {
-	$scope.serviceId = $location.search().serviceId;
+	$scope.serviceKey = $location.search().serviceKey;
 
 	function updateHistory() {
-		if ($scope.serviceId) {
+		if ($scope.serviceKey) {
 			$scope.service = Service.get({
-				id : $scope.serviceId
+				key : $scope.serviceKey
 			});
 			$scope.history = Service.history({
-				id : $scope.serviceId
+				key : $scope.serviceKey
 			}, null, function(response) {
 				console.log("got: " + response);
 				$timeout(updateHistory, 30000);
@@ -81,6 +81,10 @@ function($scope, $location, $timeout, Service) {
 		showFilter : true,
 		showColumnMenu : true,
 		columnDefs : [{
+			field : 'serviceKey',
+			displayName : 'Service',
+			width : 200
+		}, {
 			field : 'type',
 			displayName : 'Type',
 			width : 300
@@ -104,8 +108,6 @@ function($scope, $location, $timeout, Service) {
 
 msControllers.controller('MonitorsCtrl', ['$scope', '$location', '$timeout', 'Monitor', 'Service',
 function($scope, $location, $timeout, Monitor, Service) {
-	
-
 	$scope.endPointMonitors = [];
 	$scope.logFileMonitors = [];
 	$scope.pingMonitors = [];
@@ -113,14 +115,14 @@ function($scope, $location, $timeout, Monitor, Service) {
 	$scope.mostRecentStates = {};
 
 	function updateMonitors() {
-		$scope.serviceId = $location.search().serviceId;
+		$scope.serviceKey = $location.search().serviceKey;
 		var params = null;
 		if ($scope.serviceId) {
-			console.log("filtering monitors by serviceId");
+			console.log("filtering monitors by serviceKey");
 			$scope.service = Service.get({
-				id : $scope.serviceId
+				key : $scope.serviceKey
 			});
-			params = {serviceId : $scope.serviceId};
+			params = {serviceKey : $scope.serviceKey};
 		}
 		
 		$scope.monitors = Monitor.list(params, null, function(response) {
@@ -149,11 +151,11 @@ function($scope, $location, $timeout, Monitor, Service) {
 					break;
 				}
 
-				$scope.mostRecentStates[monitor.id] = Monitor.mostRecent({
-					id : monitor.id
+				$scope.mostRecentStates[monitor.key] = Monitor.mostRecent({
+					key : monitor.key
 				}, null, function(response) {
 					console.log("got: " + response.logType);
-					$scope.mostRecentStates[monitor.id] = response;
+					$scope.mostRecentStates[monitor.key] = response;
 				}, function(response) {
 					console.log("failed to get most recent monitor log");
 				});
@@ -169,15 +171,15 @@ function($scope, $location, $timeout, Monitor, Service) {
 
 msControllers.controller('MonitorHistoryCtrl', ['$scope', '$location', '$timeout', 'Monitor',
 function($scope, $location, $timeout, Monitor) {
-	$scope.monitorId = $location.search().monitorId;
+	$scope.monitorKey = $location.search().monitorKey;
 
 	function updateHistory() {
-		if ($scope.monitorId) {
+		if ($scope.monitorKey) {
 			$scope.monitor = Monitor.get({
-				id : $scope.monitorId
+				key : $scope.monitorKey
 			});
 			$scope.history = Monitor.history({
-				id : $scope.monitorId
+				key : $scope.monitorKey
 			}, null, function(response) {
 				console.log("got: " + response);
 				$timeout(updateHistory, 30000);
@@ -207,16 +209,16 @@ function($scope, $location, $timeout, Monitor) {
 		showFilter : true,
 		showColumnMenu : true,
 		columnDefs : [{
-			field : 'serviceId',
-			displayName : 'Service Id',
+			field : 'serviceKey',
+			displayName : 'Service Key',
 			width : 150
 		}, {
 			field : 'logType',
 			displayName : 'Log Type',
 			width : 100
 		}, {
-			field : 'createdDate',
-			displayName : 'Date',
+			field : 'timestamp',
+			displayName : 'Timestamp',
 			cellFilter : 'date:\'yyyy-MM-dd HH:mm:ss\'',
 			width : 160
 		}, {

@@ -26,8 +26,8 @@ public class EventHistoryRepositoryImpl implements EventHistoryRepository {
 
 	@Override
 	public void create(ServiceEvent serviceEvent) {
-		if (!events.containsKey(serviceEvent.getServiceId()))
-			events.put(serviceEvent.getServiceId(),
+		if (!events.containsKey(serviceEvent.getServiceKey()))
+			events.put(serviceEvent.getServiceKey(),
 					new ArrayList<ServiceEvent>());
 
 		serviceEvent.setEndDate(new Date());
@@ -35,6 +35,6 @@ public class EventHistoryRepositoryImpl implements EventHistoryRepository {
 		// if ((serviceEvent.getEndDate().getTime() -
 		// serviceEvent.getStartDate()
 		// .getTime()) >= minimumTime)
-		events.get(serviceEvent.getServiceId()).add(serviceEvent);
+		events.get(serviceEvent.getServiceKey()).add(serviceEvent);
 	}
 }

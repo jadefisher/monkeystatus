@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import net.jadefisher.monkeystatus.model.monitor.Monitor;
 import net.jadefisher.monkeystatus.model.service.Service;
 import net.jadefisher.monkeystatus.model.service.ServiceEvent;
 
@@ -52,10 +51,10 @@ public class ServiceRepositoryImpl implements ServiceRepository {
 	}
 
 	@Override
-	public Service find(String serviceId) {
+	public Service find(String serviceKey) {
 		if (this.services != null) {
 			for (Service service : this.services) {
-				if (service.getId().equals(serviceId))
+				if (service.getKey().equals(serviceKey))
 					return service;
 			}
 		}
@@ -70,17 +69,16 @@ public class ServiceRepositoryImpl implements ServiceRepository {
 	}
 
 	@Override
-	public Service updateCurrentEvent(Service service, Monitor monitor,
-			String message, boolean failed) {
-		service.getCurrentEvent().getAssociatedMonitors()
-				.put(monitor.getId(), failed);
-		return service;
-	}
-
-	@Override
 	public Service clearCurrentEvent(Service service) {
 		if (service != null)
 			service.setCurrentEvent(null);
 		return service;
+	}
+
+	@Override
+	public void updateCurrentEvent(Service service, String description) {
+		if (service != null && service.getCurrentEvent() != null) {
+			service.getCurrentEvent().setDescription(description);
+		}
 	}
 }

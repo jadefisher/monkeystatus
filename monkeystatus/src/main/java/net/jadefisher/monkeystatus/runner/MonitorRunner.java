@@ -26,6 +26,10 @@ public abstract class MonitorRunner<T extends Monitor> {
 			LocalDate today = LocalDate.now();
 			LocalTime now = LocalTime.now();
 			for (MaintenanceWindow window : service.getMaintenanceWindows()) {
+				if (!monitorNow) {
+					break;
+				}
+
 				if (window.getDaysOfWeek() != null
 						&& window.getDaysOfWeek()
 								.contains(today.getDayOfWeek())) {
@@ -41,10 +45,11 @@ public abstract class MonitorRunner<T extends Monitor> {
 									|| now.isAfter(windowEnd);
 						} else {
 							monitorNow = now.isAfter(windowEnd)
-									|| now.isBefore(windowStart);
+									&& now.isBefore(windowStart);
 						}
-					} else
+					} else {
 						monitorNow = false;
+					}
 				}
 			}
 		}

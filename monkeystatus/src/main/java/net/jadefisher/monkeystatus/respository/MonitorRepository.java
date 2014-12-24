@@ -8,7 +8,7 @@ public interface MonitorRepository {
 
 	List<Monitor> findAll();
 
-	Monitor find(String monitorId);
+	Monitor find(String monitorKey);
 
-	List<Monitor> findByService(String serviceId);
+	List<Monitor> findByService(String serviceKey);
 }

@@ -15,7 +15,7 @@ var msServices = angular.module('msServices', ['ngResource']);
 
 msServices.factory('Service', ['$resource',
 function($resource) {
-    return $resource('api/services/:id', {}, {
+    return $resource('api/services/:key', {}, {
         list : {
             method : 'GET',
             isArray : true
@@ -26,7 +26,7 @@ function($resource) {
         },
         history: {
         	method : 'GET',
-        	url: 'api/services/:id/history',
+        	url: 'api/services/:key/history',
             isArray : true
         }
     });
@@ -34,7 +34,7 @@ function($resource) {
 
 msServices.factory('Monitor', ['$resource',
 function($resource) {
-    return $resource('api/monitors/:id', {}, {
+    return $resource('api/monitors/:key', {}, {
         list : {
             method : 'GET',
             isArray : true
@@ -45,11 +45,11 @@ function($resource) {
         },
         mostRecent: {
         	method : 'GET',
-        	url: 'api/monitors/:id/mostRecent'
+        	url: 'api/monitors/:key/mostRecent'
         },
         history: {
         	method : 'GET',
-        	url: 'api/monitors/:id/history',
+        	url: 'api/monitors/:key/history',
             isArray : true
         }
     });

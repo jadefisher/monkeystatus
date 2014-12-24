@@ -1,13 +1,17 @@
 package net.jadefisher.monkeystatus.model.service;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
-import net.jadefisher.monkeystatus.model.monitor.Monitor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document(collection = "events")
 public class ServiceEvent {
-	private String serviceId;
+	@Id
+	private String docId;
+
+	private String serviceKey;
 
 	private Map<String, Boolean> associatedMonitors;
 
@@ -23,28 +27,28 @@ public class ServiceEvent {
 		this.startDate = new Date();
 	}
 
-	public ServiceEvent(Monitor monitor, String message, ServiceEvent oldEvent) {
+	public ServiceEvent(String serviceKey, ServiceEventType type,
+			String description) {
 		this();
-		this.serviceId = monitor.getServiceId();
-		this.description = message;
-		this.type = monitor.getServiceEventType();
-		this.associatedMonitors = new HashMap<String, Boolean>();
-
-		if (oldEvent != null) {
-			for (Map.Entry<String, Boolean> assoc : oldEvent
-					.getAssociatedMonitors().entrySet()) {
-				this.associatedMonitors.put(assoc.getKey(), assoc.getValue());
-			}
-		}
-		this.associatedMonitors.put(monitor.getId(), true);
+		this.serviceKey = serviceKey;
+		this.type = type;
+		this.description = description;
 	}
 
-	public String getServiceId() {
-		return serviceId;
+	public String getDocId() {
+		return docId;
 	}
 
-	public void setServiceId(String serviceId) {
-		this.serviceId = serviceId;
+	public void setDocId(String docId) {
+		this.docId = docId;
+	}
+
+	public String getServiceKey() {
+		return serviceKey;
+	}
+
+	public void setServiceKey(String serviceKey) {
+		this.serviceKey = serviceKey;
 	}
 
 	public Map<String, Boolean> getAssociatedMonitors() {

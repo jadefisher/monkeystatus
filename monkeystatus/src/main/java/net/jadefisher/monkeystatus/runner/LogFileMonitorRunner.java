@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 import net.jadefisher.monkeystatus.event.EventManager;
 import net.jadefisher.monkeystatus.model.monitor.LogFileMonitor;
-import net.jadefisher.monkeystatus.model.monitor.LogType;
+import net.jadefisher.monkeystatus.model.monitor.RecordingType;
 import net.jadefisher.monkeystatus.respository.ServiceRepository;
 
 import org.apache.commons.io.input.Tailer;
@@ -67,8 +67,8 @@ public class LogFileMonitorRunner extends MonitorRunner<LogFileMonitor>
 	@Override
 	public void handle(String line) {
 
-		if (!monitorServiceNow(monitor.getServiceId())) {
-			log.info("Skipping monitoring " + monitor.getId()
+		if (!monitorServiceNow(monitor.getServiceKey())) {
+			log.info("Skipping monitoring " + monitor.getKey()
 					+ " as now is a maintenance window");
 			return;
 		}
@@ -78,8 +78,8 @@ public class LogFileMonitorRunner extends MonitorRunner<LogFileMonitor>
 
 		for (Pattern pattern : patterns) {
 			if (pattern.matcher(line).matches()) {
-				log.warn(monitor.getId() + " failed!");
-				eventManager.logMonitorResult(monitor, LogType.FAILED,
+				log.warn(monitor.getKey() + " failed!");
+				eventManager.logMonitorResult(monitor, RecordingType.FAILED,
 						monitor.getLogFile() + " contained pattern match for "
 								+ pattern);
 				lastFailure = now;
@@ -90,8 +90,8 @@ public class LogFileMonitorRunner extends MonitorRunner<LogFileMonitor>
 		// create them regularly
 		if ((now - lastFailure) > stablePeriodMillis
 				&& (now - lastPass) > stablePeriodMillis) {
-			log.warn(monitor.getId() + " passed!");
-			eventManager.logMonitorResult(monitor, LogType.PASSED, null);
+			log.warn(monitor.getKey() + " passed!");
+			eventManager.logMonitorResult(monitor, RecordingType.PASSED, null);
 			lastPass = now;
 		}
 	}
@@ -103,12 +103,12 @@ public class LogFileMonitorRunner extends MonitorRunner<LogFileMonitor>
 	@Override
 	public void fileNotFound() {
 
-		if (!monitorServiceNow(monitor.getServiceId())) {
+		if (!monitorServiceNow(monitor.getServiceKey())) {
 			log.info("Skipping monitoring as now is a maintenance window");
 			return;
 		}
 
-		this.eventManager.logMonitorResult(monitor, LogType.ERROR,
+		this.eventManager.logMonitorResult(monitor, RecordingType.ERROR,
 				"Couldn't find log file: " + this.monitor.getLogFile());
 	}
 
@@ -119,12 +119,12 @@ public class LogFileMonitorRunner extends MonitorRunner<LogFileMonitor>
 	@Override
 	public void handle(Exception ex) {
 
-		if (!monitorServiceNow(monitor.getServiceId())) {
+		if (!monitorServiceNow(monitor.getServiceKey())) {
 			log.info("Skipping monitoring as now is a maintenance window");
 			return;
 		}
 
-		this.eventManager.logMonitorResult(monitor, LogType.ERROR,
+		this.eventManager.logMonitorResult(monitor, RecordingType.ERROR,
 				"Couldn't read log file: " + this.monitor.getLogFile());
 	}
 }

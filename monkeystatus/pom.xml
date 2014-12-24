@@ -8,13 +8,15 @@
 	<name>Monkey Status</name>
 	<url>http://maven.apache.org</url>
 	<properties>
-		<mockito.version>1.9.5</mockito.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
+		<mockito.version>1.9.5</mockito.version>
 		<snakeyaml.version>1.14</snakeyaml.version>
 		<spring-ws.version>2.2.0.RELEASE</spring-ws.version>
 		<mongodb.version>2.12.4</mongodb.version>
 		<spring-hateoas.version>0.16.0.RELEASE</spring-hateoas.version>
 		<spring-security.version>3.2.5.RELEASE</spring-security.version>
+		<spring-data.version>1.6.1.RELEASE</spring-data.version>
 		<servlet-api.version>3.0.1</servlet-api.version>
 		<log4j.version>1.2.17</log4j.version>
 		<spring.version>4.0.8.RELEASE</spring.version>
@@ -45,6 +47,11 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
 			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-mongodb</artifactId>
+			<version>${spring-data.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>

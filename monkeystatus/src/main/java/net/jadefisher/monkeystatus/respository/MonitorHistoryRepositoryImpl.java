@@ -1,14 +1,17 @@
 package net.jadefisher.monkeystatus.respository;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import net.jadefisher.monkeystatus.model.monitor.MonitorLogEntry;
+import net.jadefisher.monkeystatus.model.monitor.MonitorRecording;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -16,48 +19,38 @@ public class MonitorHistoryRepositoryImpl implements MonitorHistoryRepository {
 	private static final Log log = LogFactory
 			.getLog(MonitorHistoryRepositoryImpl.class);
 
-	private Map<String, List<MonitorLogEntry>> entriesByServiceId = new HashMap<String, List<MonitorLogEntry>>();
-
-	private Map<String, List<MonitorLogEntry>> entriesByMonitorId = new HashMap<String, List<MonitorLogEntry>>();
+	@Autowired
+	private MongoOperations mongoOperation;
 
 	@Override
-	public void create(MonitorLogEntry logEntry) {
+	public void create(MonitorRecording recording) {
 		try {
-			// String dateStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S")
-			// .format(logEntry.getCreatedDate());
-			// log.warn(dateStr + " " + logEntry.getLogType() + " "
-			// + logEntry.getServiceId() + " - " + logEntry.getMonitorId()
-			// + " - " + logEntry.getMessage());
-
-			if (!entriesByServiceId.containsKey(logEntry.getServiceId()))
-				entriesByServiceId.put(logEntry.getServiceId(),
-						new ArrayList<MonitorLogEntry>());
-
-			if (!entriesByMonitorId.containsKey(logEntry.getMonitorId()))
-				entriesByMonitorId.put(logEntry.getMonitorId(),
-						new ArrayList<MonitorLogEntry>());
-
-			entriesByServiceId.get(logEntry.getServiceId()).add(0, logEntry);
-			entriesByMonitorId.get(logEntry.getMonitorId()).add(0, logEntry);
+			mongoOperation.insert(recording);
 
 		} catch (Exception e) {
-			log.warn("exception logging monitor log", e);
+			log.warn("exception logging monitor recording", e);
 		}
 	}
 
 	@Override
-	public List<MonitorLogEntry> findByService(String serviceId) {
-		return entriesByServiceId.get(serviceId);
+	public List<MonitorRecording> findByService(String serviceKey) {
+		return mongoOperation.find(
+				Query.query(Criteria.where("serviceKey").is(serviceKey)),
+				MonitorRecording.class);
 	}
 
 	@Override
-	public List<MonitorLogEntry> findByMonitor(String monitorId) {
-		return entriesByMonitorId.get(monitorId);
+	public List<MonitorRecording> findByMonitor(String monitorKey) {
+		return mongoOperation.find(
+				Query.query(Criteria.where("monitorKey").is(monitorKey)),
+				MonitorRecording.class);
 	}
 
 	@Override
-	public MonitorLogEntry findMostRecentByMonitor(String monitorId) {
-		return entriesByMonitorId.containsKey(monitorId) ? entriesByMonitorId
-				.get(monitorId).get(0) : null;
+	public MonitorRecording findMostRecentByMonitor(String monitorKey) {
+		return mongoOperation.findOne(
+				Query.query(Criteria.where("monitorKey").is(monitorKey)).with(
+						new Sort(Direction.DESC, "timestamp")),
+				MonitorRecording.class);
 	}
 }

@@ -26,7 +26,7 @@ public class SubscriberRepositoryImpl implements SubscriberRepository {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<String> find(String serviceId, Set<String> tags,
+	public List<String> find(String serviceKey, Set<String> tags,
 			ServiceEventType eventType) {
 		List<String> subs = new ArrayList<String>();
 		if (subscribers == null) {
@@ -53,8 +53,8 @@ public class SubscriberRepositoryImpl implements SubscriberRepository {
 		}
 
 		for (Subscriber s : subscribers) {
-			if (s.getServiceIds().contains(serviceId) && filterByTags(s, tags)
-					&& filterByType(s, eventType)) {
+			if (s.getServiceKeys().contains(serviceKey)
+					&& filterByTags(s, tags) && filterByType(s, eventType)) {
 				subs.add(s.getRecipient());
 			}
 		}

@@ -3,7 +3,7 @@ package net.jadefisher.monkeystatus.controller;
 import java.util.List;
 
 import net.jadefisher.monkeystatus.model.monitor.Monitor;
-import net.jadefisher.monkeystatus.model.monitor.MonitorLogEntry;
+import net.jadefisher.monkeystatus.model.monitor.MonitorRecording;
 import net.jadefisher.monkeystatus.respository.MonitorHistoryRepository;
 import net.jadefisher.monkeystatus.respository.MonitorRepository;
 
@@ -29,27 +29,27 @@ public class MonitorController {
 		return monitorRepository.findAll();
 	}
 
-	@RequestMapping(method = RequestMethod.GET, params = { "serviceId" }, produces = { "application/json" })
+	@RequestMapping(method = RequestMethod.GET, params = { "serviceKey" }, produces = { "application/json" })
 	public @ResponseBody List<Monitor> listByService(
-			@RequestParam("serviceId") String serviceId) {
-		return monitorRepository.findByService(serviceId);
+			@RequestParam("serviceKey") String serviceKey) {
+		return monitorRepository.findByService(serviceKey);
 	}
 
-	@RequestMapping(value = "/{monitorId}", method = RequestMethod.GET, produces = { "application/json" })
+	@RequestMapping(value = "/{monitorKey}", method = RequestMethod.GET, produces = { "application/json" })
 	public @ResponseBody Monitor getMonitor(
-			@PathVariable("monitorId") String monitorId) {
-		return monitorRepository.find(monitorId);
+			@PathVariable("monitorKey") String monitorKey) {
+		return monitorRepository.find(monitorKey);
 	}
 
-	@RequestMapping(value = "/{monitorId}/mostRecent", method = RequestMethod.GET, produces = { "application/json" })
-	public @ResponseBody MonitorLogEntry getMostRecentMonitorLog(
-			@PathVariable("monitorId") String monitorId) {
-		return monitorLogRepository.findMostRecentByMonitor(monitorId);
+	@RequestMapping(value = "/{monitorKey}/mostRecent", method = RequestMethod.GET, produces = { "application/json" })
+	public @ResponseBody MonitorRecording getMostRecentMonitorLog(
+			@PathVariable("monitorKey") String monitorKey) {
+		return monitorLogRepository.findMostRecentByMonitor(monitorKey);
 	}
 
-	@RequestMapping(value = "/{monitorId}/history", method = RequestMethod.GET, produces = { "application/json" })
-	public @ResponseBody List<MonitorLogEntry> getMonitorLogs(
-			@PathVariable("monitorId") String monitorId) {
-		return monitorLogRepository.findByMonitor(monitorId);
+	@RequestMapping(value = "/{monitorKey}/history", method = RequestMethod.GET, produces = { "application/json" })
+	public @ResponseBody List<MonitorRecording> getMonitorLogs(
+			@PathVariable("monitorKey") String monitorKey) {
+		return monitorLogRepository.findByMonitor(monitorKey);
 	}
 }

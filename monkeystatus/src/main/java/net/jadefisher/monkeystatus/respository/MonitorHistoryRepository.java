@@ -2,14 +2,14 @@ package net.jadefisher.monkeystatus.respository;
 
 import java.util.List;
 
-import net.jadefisher.monkeystatus.model.monitor.MonitorLogEntry;
+import net.jadefisher.monkeystatus.model.monitor.MonitorRecording;
 
 public interface MonitorHistoryRepository {
-	void create(MonitorLogEntry logEntry);
+	void create(MonitorRecording logEntry);
 
-	List<MonitorLogEntry> findByService(String serviceId);
+	List<MonitorRecording> findByService(String serviceKey);
 
-	List<MonitorLogEntry> findByMonitor(String monitorId);
+	List<MonitorRecording> findByMonitor(String monitorKey);
 
-	MonitorLogEntry findMostRecentByMonitor(String monitorId);
+	MonitorRecording findMostRecentByMonitor(String monitorKey);
 }

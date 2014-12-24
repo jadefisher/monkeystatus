@@ -4,8 +4,15 @@ import java.util.Set;
 
 import net.jadefisher.monkeystatus.model.service.ServiceEventType;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection = "subscribers")
 public class Subscriber {
-	private Set<String> serviceIds;
+	@Id
+	private String docId;
+
+	private Set<String> serviceKeys;
 
 	private Set<String> tags;
 
@@ -13,12 +20,20 @@ public class Subscriber {
 
 	private String recipient;
 
-	public Set<String> getServiceIds() {
-		return serviceIds;
+	public String getDocId() {
+		return docId;
 	}
 
-	public void setServiceIds(Set<String> serviceIds) {
-		this.serviceIds = serviceIds;
+	public void setDocId(String docId) {
+		this.docId = docId;
+	}
+
+	public Set<String> getServiceKeys() {
+		return serviceKeys;
+	}
+
+	public void setServiceKeys(Set<String> serviceKeys) {
+		this.serviceKeys = serviceKeys;
 	}
 
 	public Set<String> getTags() {

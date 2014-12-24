@@ -1,14 +1,21 @@
 package net.jadefisher.monkeystatus.event;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import net.jadefisher.monkeystatus.alert.AlertManager;
-import net.jadefisher.monkeystatus.model.monitor.LogType;
 import net.jadefisher.monkeystatus.model.monitor.Monitor;
-import net.jadefisher.monkeystatus.model.monitor.MonitorLogEntry;
+import net.jadefisher.monkeystatus.model.monitor.MonitorRecording;
+import net.jadefisher.monkeystatus.model.monitor.RecordingType;
 import net.jadefisher.monkeystatus.model.service.Service;
 import net.jadefisher.monkeystatus.model.service.ServiceEvent;
+import net.jadefisher.monkeystatus.model.service.ServiceEventChange;
 import net.jadefisher.monkeystatus.model.service.ServiceEventType;
 import net.jadefisher.monkeystatus.respository.EventHistoryRepository;
 import net.jadefisher.monkeystatus.respository.MonitorHistoryRepository;
+import net.jadefisher.monkeystatus.respository.MonitorRepository;
 import net.jadefisher.monkeystatus.respository.ServiceRepository;
 
 import org.apache.commons.logging.Log;
@@ -32,66 +39,93 @@ public class EventManagerImpl implements EventManager {
 	@Autowired
 	private ServiceRepository serviceRepo;
 
+	@Autowired
+	private MonitorRepository monitorRepo;
+
 	@Override
-	public void logMonitorResult(Monitor monitor, LogType type, String message) {
+	public void logMonitorResult(Monitor monitor, RecordingType type,
+			String message) {
 		// Record monitor reading
-		log.warn("monitor: " + monitor.getId() + " " + message);
-		monitorHistoryRepo.create(new MonitorLogEntry(monitor, message, type));
+		if (type == RecordingType.FAILED)
+			log.warn("monitor: " + monitor.getKey() + " " + message);
+		monitorHistoryRepo.create(new MonitorRecording(monitor, message, type));
 
-		Service service = monitor.getServiceId() != null ? serviceRepo
-				.find(monitor.getServiceId()) : null;
+		Service service = monitor.getServiceKey() != null ? serviceRepo
+				.find(monitor.getServiceKey()) : null;
 
-		// TODO need to create events on the service
+		// Update events on the service
 		if (service != null) {
-			ServiceEvent currentEvent = service.getCurrentEvent();
-			ServiceEventType changedEventType = null;
+			ServiceEventChange change = updateServiceEvent(service);
 
-			switch (type) {
-			case ERROR:
-				break;
-			case FAILED:
-				if (currentEvent == null) {
-					service = serviceRepo.setCurrentEvent(service,
-							new ServiceEvent(monitor, message, null));
-					changedEventType = monitor.getServiceEventType();
-				} else if (currentEvent.getType() != ServiceEventType.PLANNED_OUTAGE) {
-
-					if (currentEvent.getType().getLevel() > monitor
-							.getServiceEventType().getLevel()) {
-						// create new event with a new (higher priority) type
-						service = serviceRepo
-								.setCurrentEvent(service, new ServiceEvent(
-										monitor, message, currentEvent));
-						eventHistoryRepo.create(currentEvent);
-						changedEventType = monitor.getServiceEventType();
-					} else {
-						// add monitor failure to event
-						serviceRepo.updateCurrentEvent(service, monitor,
-								message, true);
-					}
-				}
-				break;
-			case PASSED:
-				if (currentEvent != null
-						&& currentEvent.getType() != ServiceEventType.PLANNED_OUTAGE) {
-					currentEvent = serviceRepo.updateCurrentEvent(service,
-							monitor, message, false).getCurrentEvent();
-					if (!currentEvent.getAssociatedMonitors().values()
-							.contains(true)) {
-						service = serviceRepo.clearCurrentEvent(service);
-						eventHistoryRepo.create(currentEvent);
-						changedEventType = currentEvent.getType();
-					}
-				}
-				break;
-			default:
-				break;
-			}
-
-			if (changedEventType != null) {
-				alertManager.statusChange(service, changedEventType,
-						monitor.getTags());
+			if (change != null) {
+				alertManager.statusChange(change);
 			}
 		}
+	}
+
+	private ServiceEventChange updateServiceEvent(Service service) {
+		ServiceEvent currentEvent = service.getCurrentEvent();
+		ServiceEventChange change = null;
+
+		Map<Monitor, MonitorRecording> currentState = new HashMap<Monitor, MonitorRecording>();
+
+		for (Monitor monitor : monitorRepo.findByService(service.getKey())) {
+			MonitorRecording recentEntry = monitorHistoryRepo
+					.findMostRecentByMonitor(monitor.getKey());
+
+			if (recentEntry != null) {
+				currentState.put(monitor, recentEntry);
+			}
+		}
+		ServiceEvent newEvent = createServiceEvent(service.getKey(),
+				currentState);
+
+		if (newEvent == null) {
+			if (currentEvent != null && !currentEvent.getType().isPlanned()) {
+				service = serviceRepo.clearCurrentEvent(service);
+				eventHistoryRepo.create(currentEvent);
+				change = new ServiceEventChange(service, currentState, null,
+						currentEvent);
+			}
+		} else if (currentEvent == null) {
+			service = serviceRepo.setCurrentEvent(service, newEvent);
+			change = new ServiceEventChange(service, currentState, newEvent,
+					currentEvent);
+		} else if (currentEvent.getType() == newEvent.getType()) {
+			if (!currentEvent.getType().isPlanned()) {
+				serviceRepo.updateCurrentEvent(service,
+						newEvent.getDescription());
+			}
+		} else {
+			if (!currentEvent.getType().isPlanned()
+					|| currentEvent.getType().isPlanned()
+					&& newEvent.getType().moreSevere(currentEvent.getType())) {
+				service = serviceRepo.setCurrentEvent(service, newEvent);
+				eventHistoryRepo.create(currentEvent);
+				change = new ServiceEventChange(service, currentState,
+						newEvent, currentEvent);
+			}
+		}
+		return change;
+	}
+
+	private ServiceEvent createServiceEvent(String serviceId,
+			Map<Monitor, MonitorRecording> currentState) {
+		List<String> failedMonitors = new ArrayList<String>();
+		ServiceEventType currentEventType = null;
+
+		for (Map.Entry<Monitor, MonitorRecording> e : currentState.entrySet()) {
+			if (e.getValue().getLogType() == RecordingType.FAILED) {
+				failedMonitors.add(e.getKey().getName());
+				if (currentEventType == null
+						|| e.getKey().getServiceEventType()
+								.moreSevere(currentEventType)) {
+					currentEventType = e.getKey().getServiceEventType();
+				}
+			}
+		}
+		return currentEventType == null ? null : new ServiceEvent(serviceId,
+				currentEventType, failedMonitors.toString()
+						+ " are in a failed state");
 	}
 }

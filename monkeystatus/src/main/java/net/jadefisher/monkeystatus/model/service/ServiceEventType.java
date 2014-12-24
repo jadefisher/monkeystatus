@@ -1,29 +1,25 @@
 package net.jadefisher.monkeystatus.model.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public enum ServiceEventType {
-	PLANNED_OUTAGE(0), UNPLANNED_FULL_OUTAGE(1), UNPLANNED_PARTIAL_OUTAGE(2), INTERMITTENT_OUTAGE(
-			3), INFORMATIONAL(4);
+	PLANNED_FULL_OUTAGE(0, true), UNPLANNED_FULL_OUTAGE(1, false), PLANNED_PARTIAL_OUTAGE(
+			2, true), UNPLANNED_PARTIAL_OUTAGE(3, false), PLANNED_INTERMITTENT_OUTAGE(
+			4, true), UNPLANNED_INTERMITTENT_OUTAGE(5, false), PLANNED_INFORMATIONAL(
+			6, true), UNPLANNED_INFORMATIONAL(7, false);
 
 	private int level;
 
-	private ServiceEventType(int level) {
+	private boolean planned;
+
+	private ServiceEventType(int level, boolean planned) {
 		this.level = level;
+		this.planned = planned;
 	}
 
-	public int getLevel() {
-		return level;
+	public boolean moreSevere(ServiceEventType other) {
+		return this.level < other.level;
 	}
 
-	public List<ServiceEventType> higherLevels() {
-		List<ServiceEventType> higherTypes = new ArrayList<ServiceEventType>();
-		for (ServiceEventType type : ServiceEventType.values()) {
-			if (type.level >= this.level) {
-				higherTypes.add(type);
-			}
-		}
-		return higherTypes;
+	public boolean isPlanned() {
+		return planned;
 	}
 }

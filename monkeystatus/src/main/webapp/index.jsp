@@ -12,6 +12,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Monkey Status</title>
 
+<link rel="icon" href="img/favicon.ico" type="image/x-icon" />
+
 <!-- Bootstrap Styles -->
 <link rel="stylesheet"
 	href="lib/bootstrap-3.3.1/css/bootstrap.min.css?buildVersion=<%=buildVersion%>">

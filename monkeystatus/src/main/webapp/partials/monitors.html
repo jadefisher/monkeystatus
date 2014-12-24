@@ -2,11 +2,11 @@
 	<li>
 		<a href="#/home">Home</a>
 	</li>
-	<li data-ng-if="serviceId">
+	<li data-ng-if="serviceKey">
 		<a href="#/services">Services</a>
 	</li>
-	<li data-ng-if="serviceId">
-		{{serviceId}}
+	<li data-ng-if="serviceKey">
+		{{serviceKey}}
 	</li>
 	<li class="active">
 		Monitors
@@ -25,11 +25,11 @@
 					<dt>
 						Most Recent Result
 					</dt>
-					<dd ng-if="mostRecentStates[monitor.id].logType!='PASSED'">
-						<span class="label label-danger">{{mostRecentStates[monitor.id].logType}}</span>
+					<dd ng-if="mostRecentStates[monitor.key].logType!='PASSED'">
+						<span class="label label-danger">{{mostRecentStates[monitor.key].logType}}</span>
 					</dd>
-					<dd ng-if="mostRecentStates[monitor.id].logType=='PASSED'">
-						<span class="label label-success">{{mostRecentStates[monitor.id].logType}}</span>
+					<dd ng-if="mostRecentStates[monitor.key].logType=='PASSED'">
+						<span class="label label-success">{{mostRecentStates[monitor.key].logType}}</span>
 					</dd>
 					<dt>
 						Service Event Type
@@ -38,10 +38,10 @@
 						{{monitor.serviceEventType}}
 					</dd>
 					<dt>
-						Service Id
+						Service
 					</dt>
 					<dd>
-						{{monitor.serviceId}}
+						{{monitor.serviceKey}}
 					</dd>
 					<dt>
 						Tags
@@ -59,21 +59,23 @@
 						Requests
 					</dt>
 					<dd>
-						<table class="table">
-							<thead>
-								<tr>
-									<th>Method</th>
-									<th>URL</th>
+						<div class="table-responsive">
+							<table class="table table-hover table-condensed">
+								<thead>
+									<tr>
+										<th>Method</th>
+										<th>URL</th>
+									</tr>
+								</thead>
+								<tr data-ng-repeat="request in monitor.requests">
+									<td>{{request.method}}</td>
+									<td>{{request.url}}</td>
 								</tr>
-							</thead>
-							<tr data-ng-repeat="request in monitor.requests">
-								<td>{{request.method}}</td>
-								<td>{{request.url}}</td>
-							</tr>
-						</table>
+							</table>
+						</div>
 					</dd>
 				</dl>
-				<small><a class="pull-right" href="#/monitorHistory?monitorId={{monitor.id}}">History</a></small>
+				<small><a class="pull-right" href="#/monitorHistory?monitorKey={{monitor.key}}">History</a></small>
 			</div>
 		</div>
 
@@ -92,11 +94,11 @@
 					<dt>
 						Most Recent Result
 					</dt>
-					<dd ng-if="mostRecentStates[monitor.id].logType!='PASSED'">
-						<span class="label label-danger">{{mostRecentStates[monitor.id].logType}}</span>
+					<dd ng-if="mostRecentStates[monitor.key].logType!='PASSED'">
+						<span class="label label-danger">{{mostRecentStates[monitor.key].logType}}</span>
 					</dd>
-					<dd ng-if="mostRecentStates[monitor.id].logType=='PASSED'">
-						<span class="label label-success">{{mostRecentStates[monitor.id].logType}}</span>
+					<dd ng-if="mostRecentStates[monitor.key].logType=='PASSED'">
+						<span class="label label-success">{{mostRecentStates[monitor.key].logType}}</span>
 					</dd>
 					<dt>
 						Service Event Type
@@ -105,10 +107,10 @@
 						{{monitor.serviceEventType}}
 					</dd>
 					<dt>
-						Service Id
+						Service
 					</dt>
 					<dd>
-						{{monitor.serviceId}}
+						{{monitor.serviceKey}}
 					</dd>
 					<dt>
 						Tags
@@ -129,7 +131,7 @@
 						<span data-ng-repeat="ptn in monitor.patterns"> <span class="label label-default"> {{ptn}} </span> &nbsp; </span>
 					</dd>
 				</dl>
-				<small><a class="pull-right" href="#/monitorHistory?monitorId={{monitor.id}}">History</a></small>
+				<small><a class="pull-right" href="#/monitorHistory?monitorKey={{monitor.key}}">History</a></small>
 
 			</div>
 		</div>
@@ -148,11 +150,11 @@
 					<dt>
 						Most Recent Result
 					</dt>
-					<dd ng-if="mostRecentStates[monitor.id].logType!='PASSED'">
-						<span class="label label-danger">{{mostRecentStates[monitor.id].logType}}</span>
+					<dd ng-if="mostRecentStates[monitor.key].logType!='PASSED'">
+						<span class="label label-danger">{{mostRecentStates[monitor.key].logType}}</span>
 					</dd>
-					<dd ng-if="mostRecentStates[monitor.id].logType=='PASSED'">
-						<span class="label label-success">{{mostRecentStates[monitor.id].logType}}</span>
+					<dd ng-if="mostRecentStates[monitor.key].logType=='PASSED'">
+						<span class="label label-success">{{mostRecentStates[monitor.key].logType}}</span>
 					</dd>
 					<dt>
 						Service Event Type
@@ -161,10 +163,10 @@
 						{{monitor.serviceEventType}}
 					</dd>
 					<dt>
-						Service Id
+						Service
 					</dt>
 					<dd>
-						{{monitor.serviceId}}
+						{{monitor.serviceKey}}
 					</dd>
 					<dt>
 						Tags
@@ -185,7 +187,7 @@
 						{{monitor.pingTimeout}}
 					</dd>
 				</dl>
-				<small><a class="pull-right" href="#/monitorHistory?monitorId={{monitor.id}}">History</a></small>
+				<small><a class="pull-right" href="#/monitorHistory?monitorKey={{monitor.key}}">History</a></small>
 
 			</div>
 		</div>
@@ -204,11 +206,11 @@
 					<dt>
 						Most Recent Result
 					</dt>
-					<dd ng-if="mostRecentStates[monitor.id].logType!='PASSED'">
-						<span class="label label-danger">{{mostRecentStates[monitor.id].logType}}</span>
+					<dd ng-if="mostRecentStates[monitor.key].logType!='PASSED'">
+						<span class="label label-danger">{{mostRecentStates[monitor.key].logType}}</span>
 					</dd>
-					<dd ng-if="mostRecentStates[monitor.id].logType=='PASSED'">
-						<span class="label label-success">{{mostRecentStates[monitor.id].logType}}</span>
+					<dd ng-if="mostRecentStates[monitor.key].logType=='PASSED'">
+						<span class="label label-success">{{mostRecentStates[monitor.key].logType}}</span>
 					</dd>
 					<dt>
 						Service Event Type
@@ -217,10 +219,10 @@
 						{{monitor.serviceEventType}}
 					</dd>
 					<dt>
-						Service Id
+						Service
 					</dt>
 					<dd>
-						{{monitor.serviceId}}
+						{{monitor.serviceKey}}
 					</dd>
 					<dt>
 						Tags
@@ -241,7 +243,7 @@
 						{{monitor.targetPort}}
 					</dd>
 				</dl>
-				<small><a class="pull-right" href="#/monitorHistory?monitorId={{monitor.id}}">History</a></small>
+				<small><a class="pull-right" href="#/monitorHistory?monitorKey={{monitor.key}}">History</a></small>
 
 			</div>
 		</div>

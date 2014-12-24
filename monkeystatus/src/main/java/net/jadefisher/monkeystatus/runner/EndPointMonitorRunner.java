@@ -17,7 +17,7 @@ import net.jadefisher.monkeystatus.event.EventManager;
 import net.jadefisher.monkeystatus.exception.AssertionFailedException;
 import net.jadefisher.monkeystatus.model.monitor.EndPointMonitor;
 import net.jadefisher.monkeystatus.model.monitor.HttpRequestDefinition;
-import net.jadefisher.monkeystatus.model.monitor.LogType;
+import net.jadefisher.monkeystatus.model.monitor.RecordingType;
 import net.jadefisher.monkeystatus.respository.ServiceRepository;
 
 import org.apache.commons.codec.binary.Base64;
@@ -66,8 +66,8 @@ public class EndPointMonitorRunner extends MonitorRunner<EndPointMonitor> {
 
 	private void runMonitor() {
 
-		if (!monitorServiceNow(monitor.getServiceId())) {
-			log.info("Skipping monitoring " + monitor.getId()
+		if (!monitorServiceNow(monitor.getServiceKey())) {
+			log.info("Skipping monitoring " + monitor.getKey()
 					+ " as now is a maintenance window");
 			return;
 		}
@@ -103,18 +103,18 @@ public class EndPointMonitorRunner extends MonitorRunner<EndPointMonitor> {
 			// log.debug("logged off form authentication");
 		}
 
-		LogType overallMonitorLogType = LogType.PASSED;
+		RecordingType overallMonitorLogType = RecordingType.PASSED;
 		String overallMonitorMessage = null;
 
 		for (HttpRequestResult result : results) {
-			if (result.getType() == LogType.ERROR) {
-				overallMonitorLogType = LogType.ERROR;
-			} else if (result.getType() == LogType.FAILED
-					&& overallMonitorLogType != LogType.ERROR) {
-				overallMonitorLogType = LogType.FAILED;
+			if (result.getType() == RecordingType.ERROR) {
+				overallMonitorLogType = RecordingType.ERROR;
+			} else if (result.getType() == RecordingType.FAILED
+					&& overallMonitorLogType != RecordingType.ERROR) {
+				overallMonitorLogType = RecordingType.FAILED;
 			}
 
-			if (result.getType() != LogType.PASSED) {
+			if (result.getType() != RecordingType.PASSED) {
 				overallMonitorMessage = overallMonitorMessage == null ? result
 						.getMessage() : overallMonitorMessage + ", "
 						+ result.getMessage();
@@ -151,16 +151,16 @@ public class EndPointMonitorRunner extends MonitorRunner<EndPointMonitor> {
 			log.debug("running request: " + def.getUrl());
 			executeRequest(client, def, headers);
 
-			return new HttpRequestResult(LogType.PASSED, null);
+			return new HttpRequestResult(RecordingType.PASSED, null);
 		} catch (AssertionFailedException e) {
-			return new HttpRequestResult(LogType.FAILED, e.getMessage()
+			return new HttpRequestResult(RecordingType.FAILED, e.getMessage()
 					+ " for " + def.getUrl());
 		} catch (URISyntaxException | IOException e) {
 			e.printStackTrace();
-			return new HttpRequestResult(LogType.ERROR, e.getMessage());
+			return new HttpRequestResult(RecordingType.ERROR, e.getMessage());
 		} catch (RuntimeException e) {
 			e.printStackTrace();
-			return new HttpRequestResult(LogType.ERROR, e.getMessage());
+			return new HttpRequestResult(RecordingType.ERROR, e.getMessage());
 		}
 	}
 
@@ -268,16 +268,16 @@ public class EndPointMonitorRunner extends MonitorRunner<EndPointMonitor> {
 	}
 
 	class HttpRequestResult {
-		private LogType type;
+		private RecordingType type;
 
 		private String message;
 
-		public HttpRequestResult(LogType type, String message) {
+		public HttpRequestResult(RecordingType type, String message) {
 			this.type = type;
 			this.message = message;
 		}
 
-		public LogType getType() {
+		public RecordingType getType() {
 			return type;
 		}
 

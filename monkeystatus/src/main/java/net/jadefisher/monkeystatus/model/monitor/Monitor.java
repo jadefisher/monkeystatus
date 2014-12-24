@@ -4,23 +4,38 @@ import java.util.Set;
 
 import net.jadefisher.monkeystatus.model.service.ServiceEventType;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection = "monitors")
 public abstract class Monitor {
-	private String id;
+	@Id
+	private String docId;
+
+	private String key;
 
 	private String name;
 
-	private String serviceId;
+	private String serviceKey;
 
 	private ServiceEventType serviceEventType;
 
 	private Set<String> tags;
 
-	public String getId() {
-		return id;
+	public String getDocId() {
+		return docId;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setDocId(String docId) {
+		this.docId = docId;
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
 	}
 
 	public String getName() {
@@ -31,12 +46,12 @@ public abstract class Monitor {
 		this.name = name;
 	}
 
-	public String getServiceId() {
-		return serviceId;
+	public String getServiceKey() {
+		return serviceKey;
 	}
 
-	public void setServiceId(String serviceId) {
-		this.serviceId = serviceId;
+	public void setServiceKey(String serviceKey) {
+		this.serviceKey = serviceKey;
 	}
 
 	public ServiceEventType getServiceEventType() {

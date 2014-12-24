@@ -32,15 +32,15 @@ public class ServiceController {
 		return serviceRepository.findAll();
 	}
 
-	@RequestMapping(value = "/{serviceId}", method = RequestMethod.GET, produces = { "application/json" })
+	@RequestMapping(value = "/{serviceKey}", method = RequestMethod.GET, produces = { "application/json" })
 	public @ResponseBody Service getService(
-			@PathVariable("serviceId") String serviceId) {
-		return serviceRepository.find(serviceId);
+			@PathVariable("serviceKey") String serviceKey) {
+		return serviceRepository.find(serviceKey);
 	}
 
-	@RequestMapping(value = "/{serviceId}/history", method = RequestMethod.GET, produces = { "application/json" })
+	@RequestMapping(value = "/{serviceKey}/history", method = RequestMethod.GET, produces = { "application/json" })
 	public @ResponseBody List<ServiceEvent> listEvents(
-			@PathVariable("serviceId") String serviceId) {
-		return eventHistoryRepository.findByService(serviceId);
+			@PathVariable("serviceKey") String serviceKey) {
+		return eventHistoryRepository.findByService(serviceKey);
 	}
 }
