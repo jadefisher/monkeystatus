@@ -12,7 +12,6 @@
 		<div
 		data-ng-class="{'alert' : true, 'alert-{{statusClass(service)}}' : true}">
 			<h3>{{service.name}}</h3>
-
 			<div ng-if="service.currentEvent">
 				<dl class="dl-horizontal">
 					<dt>
@@ -37,7 +36,8 @@
 			</div>
 
 			<p class="pull-right">
-				<a href="#/monitors?serviceKey={{service.key}}">Monitors</a>
+				<a href="#/services/{{service.key}}">Details</a>
+				| <a href="#/monitors?serviceKey={{service.key}}">Monitors</a>
 				| <a
 				href="#/serviceHistory?serviceKey={{service.key}}">History</a>
 			</p>

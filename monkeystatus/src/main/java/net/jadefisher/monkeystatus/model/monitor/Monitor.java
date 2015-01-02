@@ -5,6 +5,7 @@ import java.util.Set;
 import net.jadefisher.monkeystatus.model.service.ServiceEventType;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "monitors")
@@ -12,6 +13,7 @@ public abstract class Monitor {
 	@Id
 	private String docId;
 
+	@Indexed
 	private String key;
 
 	private String name;

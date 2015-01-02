@@ -1,0 +1,54 @@
+<ol class="breadcrumb">
+	<li>
+		<a href="#/home">Home</a>
+	</li>
+	<li>
+		<a href="#/services">Services</a>
+	</li>
+	<li>
+		{{serviceKey}}
+	</li>
+</ol>
+
+<div class="row">
+	<div class="col-md-12">
+		<div class="well">
+			<form editable-form name="editableForm" onaftersave="saveService()">
+				<div class="form-group">
+					<h1><span id="key" editable-text="service.key" e-name="key" onbeforesave="checkRequiredText($data)" e-required>{{ service.key || 'empty' }}</span></h1>
+				</div>
+				<div class="form-group">
+					<label for="name">Name:</label>
+					<span id="name" editable-text="service.name" e-name="name" onbeforesave="checkRequiredText($data)" e-required>{{ service.name || 'empty' }}</span>
+				</div>
+				<div class="form-group">
+					<label for="owner">Owner:</label>
+					<span id="owner" editable-text="service.owner" e-name="owner" onbeforesave="checkRequiredText($data)" e-required>{{ service.owner || 'empty' }}</span>
+				</div>
+				<h2>Maintenance Windows</h2>
+				<div data-ng-repeat="w in service.maintenanceWindows">
+					{{w}}
+					<div class="form-group">
+						<label for="days{{$index}}">Days:</label>
+						<span id="days{{$index}}" editable-checklist="w.daysOfWeek" e-name="w.daysOfWeek" onbeforesave="checkDays($data)" e-ng-options="d for d in allDaysOfWeek" e-required><span data-ng-repeat="d in w.daysOfWeek"><span class="label label-default">{{d}}</span>&nbsp;</span> </span>
+					</div>
+				</div>
+
+				<div class="buttons">
+					<!-- button to show form -->
+					<button type="button" class="btn btn-default" ng-click="editableForm.$show()" ng-show="!editableForm.$visible">
+						Edit
+					</button>
+					<!-- buttons to submit / cancel form -->
+					<span ng-show="editableForm.$visible">
+						<button type="submit" class="btn btn-primary" ng-disabled="editableForm.$waiting">
+							Save
+						</button>
+						<button type="button" class="btn btn-default" ng-disabled="editableForm.$waiting" ng-click="editableForm.$cancel()">
+							Cancel
+						</button> </span>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

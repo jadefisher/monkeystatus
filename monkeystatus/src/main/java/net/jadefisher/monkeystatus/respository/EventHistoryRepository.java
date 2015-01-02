@@ -5,7 +5,7 @@ import java.util.List;
 import net.jadefisher.monkeystatus.model.service.ServiceEvent;
 
 public interface EventHistoryRepository {
-	List<ServiceEvent> findByService(String serviceId);
+	List<ServiceEvent> findByService(String serviceKey);
 
 	void create(ServiceEvent serviceEvent);
 }

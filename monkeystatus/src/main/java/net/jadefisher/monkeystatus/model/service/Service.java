@@ -3,6 +3,7 @@ package net.jadefisher.monkeystatus.model.service;
 import java.util.Set;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "services")
@@ -10,6 +11,7 @@ public class Service {
 	@Id
 	private String docId;
 
+	@Indexed
 	private String key;
 
 	private String name;

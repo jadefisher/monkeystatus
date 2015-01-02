@@ -22,6 +22,10 @@
 <link rel="stylesheet"
 	href="lib/ui-grid-3.0.0/ui-grid-stable.min.css?buildVersion=<%=buildVersion%>">
 
+<!-- x-editable Styles -->
+<link rel="stylesheet"
+	href="lib/xeditable-0.1.8/css/xeditable.css?buildVersion=<%=buildVersion%>">
+
 <!-- Monkey Status Styles -->
 <link rel="stylesheet"
 	href="css/monkeystatus.css?buildVersion=<%=buildVersion%>">
@@ -43,6 +47,14 @@
 <!-- AngularJS ng-grid library used for tables -->
 <script
 	src="lib/ui-grid-3.0.0/ui-grid-stable.min.js?buildVersion=<%=buildVersion%>"></script>
+
+<!-- AngularJS xeditable library used for forms -->
+<script
+	src="lib/xeditable-0.1.8/js/xeditable.min.js?buildVersion=<%=buildVersion%>"></script>
+
+<!-- AngularJS checklist-model library used for checklists -->
+<script
+	src="lib/checklist-model/js/checklist-model.js?buildVersion=<%=buildVersion%>"></script>
 
 <!-- MonkeyStatus scripts -->
 <script src="js/app.js?buildVersion=<%=buildVersion%>"></script>
@@ -67,17 +79,22 @@
 
 </head>
 <body class="tp-body" data-ng-controller="MainCtrl">
-	<nav class="navbar navbar-inverse navbar-fixed-top">
-		<div class="container-fluid">
-			<div class="navbar-header">
-				<a class="navbar-brand" href="#/home">MonkeyStatus</a>
-			</div>
-			<div>
-				<ul class="nav navbar-nav">
-					<li><a href="#/services">Services</a></li>
-					<li><a href="#/monitors">Monitors</a></li>
-				</ul>
-			</div>
+	<nav role="navigation" class="navbar navbar-inverse navbar-fixed-top">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle"
+				data-ng-init="navCollapsed = true"
+				data-ng-click="navCollapsed = !navCollapsed">
+				<span class="sr-only">Toggle navigation</span> <span
+					class="icon-bar"></span> <span class="icon-bar"></span> <span
+					class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="#/home">MonkeyStatus</a>
+		</div>
+		<div class="collapse navbar-collapse" ng-class="{'in':!navCollapsed}">
+			<ul class="nav navbar-nav">
+				<li><a href="#/services">Services</a></li>
+				<li><a href="#/monitors">Monitors</a></li>
+			</ul>
 		</div>
 	</nav>
 	<div class="container">

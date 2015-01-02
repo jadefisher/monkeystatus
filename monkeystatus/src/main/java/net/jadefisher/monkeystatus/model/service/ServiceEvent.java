@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Map;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "events")
@@ -11,6 +12,7 @@ public class ServiceEvent {
 	@Id
 	private String docId;
 
+	@Indexed
 	private String serviceKey;
 
 	private Map<String, Boolean> associatedMonitors;
@@ -19,8 +21,10 @@ public class ServiceEvent {
 
 	private String description;
 
+	@Indexed
 	private Date startDate;
 
+	@Indexed
 	private Date endDate;
 
 	public ServiceEvent() {

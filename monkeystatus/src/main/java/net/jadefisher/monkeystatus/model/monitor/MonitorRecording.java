@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Set;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "recordings")
@@ -11,14 +12,18 @@ public class MonitorRecording {
 	@Id
 	private String docId;
 
+	@Indexed
 	private String serviceKey;
 
+	@Indexed
 	private String monitorKey;
 
 	private RecordingType logType;
 
+	@Indexed
 	private Set<String> tags;
 
+	@Indexed
 	private Date timestamp;
 
 	private String message;

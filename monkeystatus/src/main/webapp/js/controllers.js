@@ -45,6 +45,40 @@ function($scope, $http, $timeout, Service) {
 	};
 }]);
 
+msControllers.controller('ServiceCtrl', ['$scope', '$routeParams', '$timeout', 'Service',
+function($scope, $routeParams, $timeout, Service) {
+	$scope.serviceKey = $routeParams.serviceKey;
+	$scope.allDaysOfWeek = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
+	
+	function updateService() {
+		$scope.service = Service.get({key: $scope.serviceKey}, null, function(response) {
+			console.log("got: " + response);
+			$timeout(updateService, 30000);
+		}, function(response) {
+			console.log("failed to get service");
+		});
+	};
+	updateService();
+
+	$scope.statusClass = function(service) {
+		if (!service.currentEvent) {
+			return "success";
+		}
+		switch (service.currentEvent.type) {
+		case 'PLANNED_OUTAGE':
+		case 'INFORMATIONAL':
+			return "info";
+		case 'UNPLANNED_PARTIAL_OUTAGE':
+		case 'INTERMITTENT_OUTAGE':
+			return 'warning';
+		case 'UNPLANNED_FULL_OUTAGE':
+			return 'danger';
+		default:
+			return 'danger';
+		}
+	};
+}]);
+
 msControllers.controller('serviceHistoryCtrl', ['$scope', '$location', '$timeout', 'Service',
 function($scope, $location, $timeout, Service) {
 	$scope.serviceKey = $location.search().serviceKey;
@@ -117,7 +151,7 @@ function($scope, $location, $timeout, Monitor, Service) {
 	function updateMonitors() {
 		$scope.serviceKey = $location.search().serviceKey;
 		var params = null;
-		if ($scope.serviceId) {
+		if ($scope.serviceKey) {
 			console.log("filtering monitors by serviceKey");
 			$scope.service = Service.get({
 				key : $scope.serviceKey
