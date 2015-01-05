@@ -12,29 +12,57 @@
 
 <div class="row">
 	<div class="col-md-12">
-		<div class="well">
-			<form editable-form name="editableForm" onaftersave="saveService()">
-				<div class="form-group">
-					<h1><span id="key" editable-text="service.key" e-name="key" onbeforesave="checkRequiredText($data)" e-required>{{ service.key || 'empty' }}</span></h1>
+		<form editable-form name="editableForm" onaftersave="saveService()">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<span editable-text="service.key" e-name="key" onbeforesave="checkRequiredText($data)" e-required><h3 class="panel-title">{{ service.key || 'empty' }}</h3></span>
 				</div>
-				<div class="form-group">
-					<label for="name">Name:</label>
-					<span id="name" editable-text="service.name" e-name="name" onbeforesave="checkRequiredText($data)" e-required>{{ service.name || 'empty' }}</span>
-				</div>
-				<div class="form-group">
-					<label for="owner">Owner:</label>
-					<span id="owner" editable-text="service.owner" e-name="owner" onbeforesave="checkRequiredText($data)" e-required>{{ service.owner || 'empty' }}</span>
-				</div>
-				<h2>Maintenance Windows</h2>
-				<div data-ng-repeat="w in service.maintenanceWindows">
-					{{w}}
-					<div class="form-group">
-						<label for="days{{$index}}">Days:</label>
-						<span id="days{{$index}}" editable-checklist="w.daysOfWeek" e-name="w.daysOfWeek" onbeforesave="checkDays($data)" e-ng-options="d for d in allDaysOfWeek" e-required><span data-ng-repeat="d in w.daysOfWeek"><span class="label label-default">{{d}}</span>&nbsp;</span> </span>
-					</div>
+				<div class="panel-body">
+					<dl class="dl-horizontal">
+						<dt>
+							Name
+						</dt>
+						<dd>
+							<span id="name" editable-text="service.name" e-name="name" onbeforesave="checkRequiredText($data)" e-required>{{ service.name || 'empty' }}</span>
+						</dd>
+						<dt>
+							Owner
+						</dt>
+						<dd>
+							<span id="owner" editable-text="service.owner" e-name="owner" onbeforesave="checkRequiredText($data)" e-required>{{ service.owner || 'empty' }}</span>
+						</dd>
+						<dt>
+							Maintenance Windows
+						</dt>
+						<dd data-ng-repeat="w in service.maintenanceWindows">
+							<div class="panel panel-default">
+								<div class="panel-heading">
+									<span editable-text="w.description" e-name="w.description{{$index}}" onbeforesave="checkRequiredText($data)" e-required><h3 class="panel-title">{{ w.description || 'empty' }}</h3></span>
+								</div>
+								<div class="panel-body">
+									<dl class="dl-horizontal">
+										<dt>
+											Days
+										</dt>
+										<dd>
+											<span editable-checklist="w.daysOfWeek" e-name="w.daysOfWeek{{$index}}" onbeforesave="checkDays($data)" e-ng-options="d for d in allDaysOfWeek" e-required><span data-ng-repeat="d in w.daysOfWeek"><span class="label label-default">{{d}}</span>&nbsp;</span> </span>
+										</dd>
+										<dt>
+											Start
+										</dt>
+										<dd>
+											<span editable-number="w.start.hours" e-name="w.start.hours{{$index}}" e-min="0" e-max="24" e-required>{{ w.start.hours || '0' }}</span>
+											:
+											<span editable-number="w.start.minutes" e-name="w.start.minutes{{$index}}" e-min="0" e-max="59" e-required>{{ w.start.minutes || '00' }}</span>
+										</dd>
+									</dl>
+								</div>
+							</div>
+						</dd>
+					</dl>
 				</div>
 
-				<div class="buttons">
+				<div class="buttons" style="padding: 15px;">
 					<!-- button to show form -->
 					<button type="button" class="btn btn-default" ng-click="editableForm.$show()" ng-show="!editableForm.$visible">
 						Edit
@@ -48,7 +76,8 @@
 							Cancel
 						</button> </span>
 				</div>
-			</form>
-		</div>
+			</div>
+
+		</form>
 	</div>
 </div>

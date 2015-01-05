@@ -4,11 +4,21 @@ import java.time.DayOfWeek;
 import java.util.Set;
 
 public class MaintenanceWindow {
+	private String description;
+
 	private Set<DayOfWeek> daysOfWeek;
 
 	private TimeOfDay start;
 
 	private TimeOfDay end;
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
 	public Set<DayOfWeek> getDaysOfWeek() {
 		return daysOfWeek;

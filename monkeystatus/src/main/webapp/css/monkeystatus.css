@@ -2,6 +2,10 @@ body {
 	padding-top: 65px;
 }
 
+.editable-checklist label {
+  display: block;
+}
+
 td {
 	-ms-word-break: break-all;
 	word-break: break-all;
