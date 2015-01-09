@@ -5,6 +5,7 @@ import java.util.Set;
 import net.jadefisher.monkeystatus.model.service.ServiceEventType;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -12,6 +13,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public abstract class Monitor {
 	@Id
 	private String docId;
+
+	@Version
+	private Long version;
 
 	@Indexed
 	private String key;
@@ -30,6 +34,14 @@ public abstract class Monitor {
 
 	public void setDocId(String docId) {
 		this.docId = docId;
+	}
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
 	}
 
 	public String getKey() {

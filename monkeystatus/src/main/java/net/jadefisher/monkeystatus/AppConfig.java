@@ -12,11 +12,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 import com.mongodb.MongoClient;
 
 @Configuration
 @ComponentScan
+@EnableMongoRepositories("net.jadefisher.monkeystatus.respository")
 @PropertySource("classpath:application.properties")
 public class AppConfig {
 

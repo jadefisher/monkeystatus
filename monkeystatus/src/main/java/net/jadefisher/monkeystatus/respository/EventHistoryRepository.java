@@ -1,11 +1,14 @@
 package net.jadefisher.monkeystatus.respository;
 
-import java.util.List;
-
 import net.jadefisher.monkeystatus.model.service.ServiceEvent;
 
-public interface EventHistoryRepository {
-	List<ServiceEvent> findByService(String serviceKey);
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.stereotype.Repository;
 
-	void create(ServiceEvent serviceEvent);
+@Repository
+public interface EventHistoryRepository extends
+		PagingAndSortingRepository<ServiceEvent, String> {
+	Page<ServiceEvent> findByServiceKey(String serviceKey, Pageable pageable);
 }

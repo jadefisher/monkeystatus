@@ -6,16 +6,45 @@
 		<a href="#/services">Services</a>
 	</li>
 	<li>
-		<a href="#/services/{{service.key}}">{{serviceKey}}</a>
+		<a href="#/services/{{serviceKey}}">{{serviceKey}}</a>
 	</li>
 	<li class="active">
 		History
 	</li>
 </ol>
 
+<h3>Service History for {{serviceKey}}</h3>
+
 <div class="row">
 	<div class="col-md-12">
-		    <div class="gridStyle" data-ui-grid="gridOptions" data-ui-grid-edit></div>
+		<div class="gridStyle" data-ui-grid="gridOptions" data-ui-grid-edit></div>
 	</div>
 </div>
 
+<br/>
+
+<div class="row">
+	<div class="col-md-2"></div>
+	<div class="col-md-4">
+		<dl class="dl-horizontal">
+			<dt>
+				Page {{page + 1}}
+			</dt>
+			<dd>
+				<a class="btn btn-default btn-sm" aria-label="Prev" ng-disabled="!prevPageExists" ng-click="prevPage()" > <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> </a>
+				<a class="btn btn-default btn-sm" aria-label="Next" ng-disabled="!nextPageExists" ng-click="nextPage()"> <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> </a>
+			</dd>
+		</dl>
+	</div>
+	<div class="col-md-6">
+		<dl class="dl-horizontal">
+			<dt>
+				Records per page
+			</dt>
+			<dd>
+				<a href="#" editable-number="pageSize" onaftersave="updateHistory()">{{ pageSize || "" }}</a>
+			</dd>
+		</dl>
+
+	</div>
+</div>

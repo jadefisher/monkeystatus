@@ -3,6 +3,7 @@ package net.jadefisher.monkeystatus.model.service;
 import java.util.Set;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -10,6 +11,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Service {
 	@Id
 	private String docId;
+
+	@Version
+	private Long version;
 
 	@Indexed
 	private String key;
@@ -28,6 +32,14 @@ public class Service {
 
 	public void setDocId(String docId) {
 		this.docId = docId;
+	}
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
 	}
 
 	public String getKey() {

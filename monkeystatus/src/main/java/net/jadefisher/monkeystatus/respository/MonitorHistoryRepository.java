@@ -1,15 +1,20 @@
 package net.jadefisher.monkeystatus.respository;
 
-import java.util.List;
-
 import net.jadefisher.monkeystatus.model.monitor.MonitorRecording;
 
-public interface MonitorHistoryRepository {
-	void create(MonitorRecording logEntry);
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.stereotype.Repository;
 
-	List<MonitorRecording> findByService(String serviceKey);
+@Repository
+public interface MonitorHistoryRepository extends
+		PagingAndSortingRepository<MonitorRecording, String> {
 
-	List<MonitorRecording> findByMonitor(String monitorKey);
+	Page<MonitorRecording> findByServiceKey(String serviceKey, Pageable pagable);
 
-	MonitorRecording findMostRecentByMonitor(String monitorKey);
+	Page<MonitorRecording> findByMonitorKey(String monitorKey, Pageable pagable);
+
+	MonitorRecording findOneByMonitorKey(String monitorKey, Sort sort);
 }

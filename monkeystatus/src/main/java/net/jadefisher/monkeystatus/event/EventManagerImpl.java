@@ -1,6 +1,8 @@
 package net.jadefisher.monkeystatus.event;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +23,8 @@ import net.jadefisher.monkeystatus.respository.ServiceRepository;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -48,17 +52,21 @@ public class EventManagerImpl implements EventManager {
 		// Record monitor reading
 		if (type == RecordingType.FAILED)
 			log.warn("monitor: " + monitor.getKey() + " " + message);
-		monitorHistoryRepo.create(new MonitorRecording(monitor, message, type));
+		monitorHistoryRepo.save(new MonitorRecording(monitor, message, type));
 
 		Service service = monitor.getServiceKey() != null ? serviceRepo
 				.find(monitor.getServiceKey()) : null;
 
 		// Update events on the service
 		if (service != null) {
-			ServiceEventChange change = updateServiceEvent(service);
+			try {
+				ServiceEventChange change = updateServiceEvent(service);
 
-			if (change != null) {
-				alertManager.statusChange(change);
+				if (change != null) {
+					alertManager.statusChange(change);
+				}
+			} catch (ConcurrentModificationException e) {
+				log.warn(e);
 			}
 		}
 	}
@@ -71,7 +79,8 @@ public class EventManagerImpl implements EventManager {
 
 		for (Monitor monitor : monitorRepo.findByService(service.getKey())) {
 			MonitorRecording recentEntry = monitorHistoryRepo
-					.findMostRecentByMonitor(monitor.getKey());
+					.findOneByMonitorKey(monitor.getKey(), new Sort(
+							Direction.DESC, "timestamp"));
 
 			if (recentEntry != null) {
 				currentState.put(monitor, recentEntry);
@@ -83,7 +92,7 @@ public class EventManagerImpl implements EventManager {
 		if (newEvent == null) {
 			if (currentEvent != null && !currentEvent.getType().isPlanned()) {
 				service = serviceRepo.clearCurrentEvent(service);
-				eventHistoryRepo.create(currentEvent);
+				archiveServiceEvent(currentEvent);
 				change = new ServiceEventChange(service, currentState, null,
 						currentEvent);
 			}
@@ -101,12 +110,17 @@ public class EventManagerImpl implements EventManager {
 					|| currentEvent.getType().isPlanned()
 					&& newEvent.getType().moreSevere(currentEvent.getType())) {
 				service = serviceRepo.setCurrentEvent(service, newEvent);
-				eventHistoryRepo.create(currentEvent);
+				archiveServiceEvent(currentEvent);
 				change = new ServiceEventChange(service, currentState,
 						newEvent, currentEvent);
 			}
 		}
 		return change;
+	}
+
+	private void archiveServiceEvent(ServiceEvent event) {
+		event.setEndDate(new Date());
+		eventHistoryRepo.save(event);
 	}
 
 	private ServiceEvent createServiceEvent(String serviceId,

@@ -79,26 +79,57 @@ function($scope, $routeParams, $timeout, Service) {
 	};
 }]);
 
-msControllers.controller('serviceHistoryCtrl', ['$scope', '$location', '$timeout', 'Service',
-function($scope, $location, $timeout, Service) {
+msControllers.controller('serviceHistoryCtrl', ['$scope', '$location', '$timeout', '$http', 'Service',
+function($scope, $location, $timeout, $http, Service) {
 	$scope.serviceKey = $location.search().serviceKey;
+	$scope.pageData = null;
+	$scope.page = 0;
+	$scope.pageSize = 100;
+	$scope.nextPageExists = false;
+	$scope.prevPageExists = false;
 
-	function updateHistory() {
+	$scope.updateHistory = function() {
 		if ($scope.serviceKey) {
 			$scope.service = Service.get({
 				key : $scope.serviceKey
 			});
+			var config = {};
+			config.params = {page: $scope.page, pageSize: $scope.pageSize};
+			
+			$scope.pageData = $http.get('api/services/' + $scope.serviceKey + "/history", config).success(function(data, status, headers, config) {
+				$scope.history = data.content;
+				$scope.nextPageExists = data.last == false;
+				$scope.prevPageExists = data.first == false;
+				
+				$timeout($scope.updateHistory, 30000);
+			}).error(function(data, status, headers, config) {
+				console.log("failed to get history");
+				
+				$timeout($scope.updateHistory, 30000);
+			});
+			/*
 			$scope.history = Service.history({
 				key : $scope.serviceKey
 			}, null, function(response) {
 				console.log("got: " + response);
+				//$scope.history = response.content;
 				$timeout(updateHistory, 30000);
 			}, function(response) {
 				console.log("failed to get services");
-			});
+			}); */
 		}
 	};
-	updateHistory();
+	$scope.updateHistory();
+	
+	$scope.prevPage = function() {
+		$scope.page = $scope.page - 1;
+		$scope.updateHistory();
+	};
+	
+	$scope.nextPage = function() {
+		$scope.page = $scope.page + 1;
+		$scope.updateHistory();
+	};
 
 	$scope.dateOptions = {
 		'year-format' : "'yyyy'",
@@ -212,10 +243,11 @@ function($scope, $location, $timeout, Monitor) {
 			$scope.monitor = Monitor.get({
 				key : $scope.monitorKey
 			});
-			$scope.history = Monitor.history({
+			Monitor.history({
 				key : $scope.monitorKey
 			}, null, function(response) {
 				console.log("got: " + response);
+				$scope.history = response.content;
 				$timeout(updateHistory, 30000);
 			}, function(response) {
 				console.log("failed to get services");

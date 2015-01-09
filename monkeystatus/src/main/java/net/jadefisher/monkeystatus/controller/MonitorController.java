@@ -8,6 +8,10 @@ import net.jadefisher.monkeystatus.respository.MonitorHistoryRepository;
 import net.jadefisher.monkeystatus.respository.MonitorRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,12 +48,17 @@ public class MonitorController {
 	@RequestMapping(value = "/{monitorKey}/mostRecent", method = RequestMethod.GET, produces = { "application/json" })
 	public @ResponseBody MonitorRecording getMostRecentMonitorLog(
 			@PathVariable("monitorKey") String monitorKey) {
-		return monitorLogRepository.findMostRecentByMonitor(monitorKey);
+		return monitorLogRepository.findOneByMonitorKey(monitorKey, new Sort(
+				Direction.DESC, "timestamp"));
 	}
 
 	@RequestMapping(value = "/{monitorKey}/history", method = RequestMethod.GET, produces = { "application/json" })
-	public @ResponseBody List<MonitorRecording> getMonitorLogs(
-			@PathVariable("monitorKey") String monitorKey) {
-		return monitorLogRepository.findByMonitor(monitorKey);
+	public @ResponseBody Page<MonitorRecording> getMonitorLogs(
+			@PathVariable("monitorKey") String monitorKey,
+			@RequestParam(value = "page", required = false) Integer page,
+			@RequestParam(value = "pageSize", required = false) Integer pageSize) {
+		return monitorLogRepository.findByMonitorKey(monitorKey,
+				new PageRequest(page == null ? 0 : page, pageSize == null ? 50
+						: pageSize, new Sort(Direction.DESC, "timestamp")));
 	}
 }

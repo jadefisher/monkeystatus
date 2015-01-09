@@ -60,13 +60,13 @@ public class LogFileMonitorRunner extends MonitorRunner<LogFileMonitor>
 	}
 
 	private void setUpMonitoring() {
-		tailer = new Tailer(new File(this.monitor.getLogFile()), this, 500);
+		tailer = Tailer.create(new File(this.monitor.getLogFile()), this, 5000,
+				true, true);
 		tailer.run();
 	}
 
 	@Override
 	public void handle(String line) {
-
 		if (!monitorServiceNow(monitor.getServiceKey())) {
 			log.info("Skipping monitoring " + monitor.getKey()
 					+ " as now is a maintenance window");
@@ -102,7 +102,6 @@ public class LogFileMonitorRunner extends MonitorRunner<LogFileMonitor>
 
 	@Override
 	public void fileNotFound() {
-
 		if (!monitorServiceNow(monitor.getServiceKey())) {
 			log.info("Skipping monitoring as now is a maintenance window");
 			return;
@@ -118,13 +117,13 @@ public class LogFileMonitorRunner extends MonitorRunner<LogFileMonitor>
 
 	@Override
 	public void handle(Exception ex) {
-
 		if (!monitorServiceNow(monitor.getServiceKey())) {
 			log.info("Skipping monitoring as now is a maintenance window");
 			return;
 		}
 
 		this.eventManager.logMonitorResult(monitor, RecordingType.ERROR,
-				"Couldn't read log file: " + this.monitor.getLogFile());
+				"Exception reading file: " + this.monitor.getLogFile() + " - "
+						+ ex.getMessage());
 	}
 }

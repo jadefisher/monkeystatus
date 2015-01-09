@@ -1,7 +1,6 @@
 package net.jadefisher.monkeystatus.model.service;
 
 import java.util.Date;
-import java.util.Map;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -14,8 +13,6 @@ public class ServiceEvent {
 
 	@Indexed
 	private String serviceKey;
-
-	private Map<String, Boolean> associatedMonitors;
 
 	private ServiceEventType type;
 
@@ -53,14 +50,6 @@ public class ServiceEvent {
 
 	public void setServiceKey(String serviceKey) {
 		this.serviceKey = serviceKey;
-	}
-
-	public Map<String, Boolean> getAssociatedMonitors() {
-		return associatedMonitors;
-	}
-
-	public void setAssociatedMonitors(Map<String, Boolean> associatedMonitors) {
-		this.associatedMonitors = associatedMonitors;
 	}
 
 	public ServiceEventType getType() {
