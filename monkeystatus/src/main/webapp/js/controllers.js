@@ -6,62 +6,7 @@ var msControllers = angular.module('msControllers', []);
 msControllers.controller('MainCtrl', ['$scope', '$http',
 function($scope, $http) {
 	$scope.dateformat = "yyyy-MM-dd HH:mm:ss";
-}]);
-
-msControllers.controller('HomeCtrl', ['$scope', '$http',
-function($scope, $http) {
-	//na
-}]);
-
-msControllers.controller('ServicesCtrl', ['$scope', '$http', '$timeout', 'Service',
-function($scope, $http, $timeout, Service) {
-
-	function updateServices() {
-		$scope.services = Service.list(null, null, function(response) {
-			console.log("got: " + response);
-			$timeout(updateServices, 30000);
-		}, function(response) {
-			console.log("failed to get services");
-		});
-	};
-	updateServices();
-
-	$scope.statusClass = function(service) {
-		if (!service.currentEvent) {
-			return "success";
-		}
-		switch (service.currentEvent.type) {
-		case 'PLANNED_OUTAGE':
-		case 'INFORMATIONAL':
-			return "info";
-		case 'UNPLANNED_PARTIAL_OUTAGE':
-		case 'INTERMITTENT_OUTAGE':
-			return 'warning';
-		case 'UNPLANNED_FULL_OUTAGE':
-			return 'danger';
-		default:
-			return 'danger';
-		}
-	};
-}]);
-
-msControllers.controller('ServiceCtrl', ['$scope', '$routeParams', '$timeout', 'Service',
-function($scope, $routeParams, $timeout, Service) {
-	$scope.serviceKey = $routeParams.serviceKey;
-	$scope.allDaysOfWeek = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
-
-	function updateService() {
-		$scope.service = Service.get({
-			key : $scope.serviceKey
-		}, null, function(response) {
-			console.log("got: " + response);
-			$timeout(updateService, 30000);
-		}, function(response) {
-			console.log("failed to get service");
-		});
-	};
-	updateService();
-
+	
 	$scope.statusClass = function(service) {
 		if (!service.currentEvent) {
 			return "success";
@@ -82,6 +27,43 @@ function($scope, $routeParams, $timeout, Service) {
 			return 'danger';
 		}
 	};
+}]);
+
+msControllers.controller('HomeCtrl', ['$scope', '$http',
+function($scope, $http) {
+	//na
+}]);
+
+msControllers.controller('ServicesCtrl', ['$scope', '$http', '$timeout', 'Service',
+function($scope, $http, $timeout, Service) {
+
+	function updateServices() {
+		$scope.services = Service.list(null, null, function(response) {
+			console.log("got: " + response);
+			$timeout(updateServices, 30000);
+		}, function(response) {
+			console.log("failed to get services");
+		});
+	};
+	updateServices();
+}]);
+
+msControllers.controller('ServiceCtrl', ['$scope', '$routeParams', '$timeout', 'Service',
+function($scope, $routeParams, $timeout, Service) {
+	$scope.serviceKey = $routeParams.serviceKey;
+	$scope.allDaysOfWeek = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
+
+	function updateService() {
+		$scope.service = Service.get({
+			key : $scope.serviceKey
+		}, null, function(response) {
+			console.log("got: " + response);
+			$timeout(updateService, 30000);
+		}, function(response) {
+			console.log("failed to get service");
+		});
+	};
+	updateService();
 }]);
 
 msControllers.controller('serviceHistoryCtrl', ['$scope', '$location', '$timeout', '$http', 'Service',
@@ -128,15 +110,22 @@ function($scope, $location, $timeout, $http, Service) {
 		}
 	};
 	$scope.updateHistory();
+	
+	$scope.$watch('pageSize', function(newValue, oldValue) {
+		$scope.page = 0;
+	});
+	
+	$scope.$watch('page', function(newValue, oldValue) {
+		if (newValue !== oldValue)
+			$scope.updateHistory();
+	});
 
 	$scope.prevPage = function() {
 		$scope.page = $scope.page - 1;
-		$scope.updateHistory();
 	};
 
 	$scope.nextPage = function() {
 		$scope.page = $scope.page + 1;
-		$scope.updateHistory();
 	};
 
 	$scope.dateOptions = {
@@ -289,15 +278,22 @@ function($scope, $location, $timeout, $http, Monitor) {
 		}
 	};
 	$scope.updateHistory();
+	
+	$scope.$watch('pageSize', function(newValue, oldValue) {
+		$scope.page = 0;
+	});
+	
+	$scope.$watch('page', function(newValue, oldValue) {
+		if (newValue !== oldValue)
+			$scope.updateHistory();
+	});
 
 	$scope.prevPage = function() {
 		$scope.page = $scope.page - 1;
-		$scope.updateHistory();
 	};
 
 	$scope.nextPage = function() {
 		$scope.page = $scope.page + 1;
-		$scope.updateHistory();
 	};
 
 	$scope.dateOptions = {
