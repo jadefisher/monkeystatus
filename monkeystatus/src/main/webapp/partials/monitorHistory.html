@@ -2,17 +2,56 @@
 	<li>
 		<a href="#/home">Home</a>
 	</li>
+	<li data-ng-if="serviceKey">
+		<a href="#/services">Services</a>
+	</li>
+	<li data-ng-if="serviceKey">
+		<a href="#/services/{{service.key}}">{{serviceKey}}</a>
+	</li>
 	<li>
 		<a href="#/monitors">Monitors</a>
 	</li>
+	<li>
+		<a href="#/monitors/{{monitorKey}}">{{monitorKey}}</a>
+	</li>
 	<li class="active">
-		{{monitor.name}}
+		History
 	</li>
 </ol>
+
+<h3>Monitor History for {{monitorKey}}</h3>
 
 <div class="row">
 	<div class="col-md-12">
 		    <div class="gridStyle" data-ui-grid="gridOptions"  ui-grid-selection></div>
+	</div>
+</div>
+
+<br/>
+
+<div class="row">
+	<div class="col-md-2"></div>
+	<div class="col-md-4">
+		<dl class="dl-horizontal">
+			<dt>
+				Page {{page + 1}}
+			</dt>
+			<dd>
+				<a class="btn btn-default btn-sm" aria-label="Prev" ng-disabled="page <= 0" ng-click="prevPage()" > <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> </a>
+				<a class="btn btn-default btn-sm" aria-label="Next" ng-disabled="!nextPageExists" ng-click="nextPage()"> <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> </a>
+			</dd>
+		</dl>
+	</div>
+	<div class="col-md-6">
+		<dl class="dl-horizontal">
+			<dt>
+				Records per page
+			</dt>
+			<dd>
+				<a href="#" editable-number="pageSize" onaftersave="updateHistory()">{{ pageSize || "" }}</a>
+			</dd>
+		</dl>
+
 	</div>
 </div>
 

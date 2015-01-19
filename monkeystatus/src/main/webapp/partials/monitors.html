@@ -75,10 +75,9 @@
 						</div>
 					</dd>
 				</dl>
-				<small><a class="pull-right" href="#/monitorHistory?monitorKey={{monitor.key}}">History</a></small>
+				<small> <a data-ng-if="!serviceKey" class="pull-right" href="#/monitorHistory?monitorKey={{monitor.key}}&serviceKey={{serviceKey}}">History</a> <a data-ng-if="serviceKey" class="pull-right" href="#/monitorHistory?monitorKey={{monitor.key}}&serviceKey={{serviceKey}}">History</a> </small>
 			</div>
 		</div>
-
 	</div>
 </div>
 
@@ -131,8 +130,7 @@
 						<span data-ng-repeat="ptn in monitor.patterns"> <span class="label label-default"> {{ptn}} </span> &nbsp; </span>
 					</dd>
 				</dl>
-				<small><a class="pull-right" href="#/monitorHistory?monitorKey={{monitor.key}}">History</a></small>
-
+				<small> <a data-ng-if="!serviceKey" class="pull-right" href="#/monitorHistory?monitorKey={{monitor.key}}&serviceKey={{serviceKey}}">History</a> <a data-ng-if="serviceKey" class="pull-right" href="#/monitorHistory?monitorKey={{monitor.key}}&serviceKey={{serviceKey}}">History</a> </small>
 			</div>
 		</div>
 	</div>
@@ -187,8 +185,7 @@
 						{{monitor.pingTimeout}}
 					</dd>
 				</dl>
-				<small><a class="pull-right" href="#/monitorHistory?monitorKey={{monitor.key}}">History</a></small>
-
+				<small> <a data-ng-if="!serviceKey" class="pull-right" href="#/monitorHistory?monitorKey={{monitor.key}}&serviceKey={{serviceKey}}">History</a> <a data-ng-if="serviceKey" class="pull-right" href="#/monitorHistory?monitorKey={{monitor.key}}&serviceKey={{serviceKey}}">History</a> </small>
 			</div>
 		</div>
 	</div>
@@ -243,8 +240,7 @@
 						{{monitor.targetPort}}
 					</dd>
 				</dl>
-				<small><a class="pull-right" href="#/monitorHistory?monitorKey={{monitor.key}}">History</a></small>
-
+				<small> <a data-ng-if="!serviceKey" class="pull-right" href="#/monitorHistory?monitorKey={{monitor.key}}&serviceKey={{serviceKey}}">History</a> <a data-ng-if="serviceKey" class="pull-right" href="#/monitorHistory?monitorKey={{monitor.key}}&serviceKey={{serviceKey}}">History</a> </small>
 			</div>
 		</div>
 	</div>

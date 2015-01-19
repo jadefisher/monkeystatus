@@ -31,7 +31,7 @@
 				Page {{page + 1}}
 			</dt>
 			<dd>
-				<a class="btn btn-default btn-sm" aria-label="Prev" ng-disabled="!prevPageExists" ng-click="prevPage()" > <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> </a>
+				<a class="btn btn-default btn-sm" aria-label="Prev" ng-disabled="page <= 0" ng-click="prevPage()" > <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> </a>
 				<a class="btn btn-default btn-sm" aria-label="Next" ng-disabled="!nextPageExists" ng-click="nextPage()"> <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> </a>
 			</dd>
 		</dl>

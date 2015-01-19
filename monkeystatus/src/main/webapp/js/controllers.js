@@ -49,9 +49,11 @@ msControllers.controller('ServiceCtrl', ['$scope', '$routeParams', '$timeout', '
 function($scope, $routeParams, $timeout, Service) {
 	$scope.serviceKey = $routeParams.serviceKey;
 	$scope.allDaysOfWeek = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
-	
+
 	function updateService() {
-		$scope.service = Service.get({key: $scope.serviceKey}, null, function(response) {
+		$scope.service = Service.get({
+			key : $scope.serviceKey
+		}, null, function(response) {
 			console.log("got: " + response);
 			$timeout(updateService, 30000);
 		}, function(response) {
@@ -65,11 +67,14 @@ function($scope, $routeParams, $timeout, Service) {
 			return "success";
 		}
 		switch (service.currentEvent.type) {
-		case 'PLANNED_OUTAGE':
-		case 'INFORMATIONAL':
+		case 'PLANNED_FULL_OUTAGE':
+		case 'PLANNED_PARTIAL_OUTAGE':
+		case 'PLANNED_INTERMITTENT_OUTAGE':
+		case 'PLANNED_INFORMATIONAL':
+		case 'UNPLANNED_INFORMATIONAL':
 			return "info";
 		case 'UNPLANNED_PARTIAL_OUTAGE':
-		case 'INTERMITTENT_OUTAGE':
+		case 'UNPLANNED_INTERMITTENT_OUTAGE':
 			return 'warning';
 		case 'UNPLANNED_FULL_OUTAGE':
 			return 'danger';
@@ -94,38 +99,41 @@ function($scope, $location, $timeout, $http, Service) {
 				key : $scope.serviceKey
 			});
 			var config = {};
-			config.params = {page: $scope.page, pageSize: $scope.pageSize};
-			
+			config.params = {
+				page : $scope.page,
+				pageSize : $scope.pageSize
+			};
+
 			$scope.pageData = $http.get('api/services/' + $scope.serviceKey + "/history", config).success(function(data, status, headers, config) {
 				$scope.history = data.content;
 				$scope.nextPageExists = data.last == false;
 				$scope.prevPageExists = data.first == false;
-				
+
 				$timeout($scope.updateHistory, 30000);
 			}).error(function(data, status, headers, config) {
 				console.log("failed to get history");
-				
+
 				$timeout($scope.updateHistory, 30000);
 			});
 			/*
-			$scope.history = Service.history({
-				key : $scope.serviceKey
-			}, null, function(response) {
-				console.log("got: " + response);
-				//$scope.history = response.content;
-				$timeout(updateHistory, 30000);
-			}, function(response) {
-				console.log("failed to get services");
-			}); */
+			 $scope.history = Service.history({
+			 key : $scope.serviceKey
+			 }, null, function(response) {
+			 console.log("got: " + response);
+			 //$scope.history = response.content;
+			 $timeout(updateHistory, 30000);
+			 }, function(response) {
+			 console.log("failed to get services");
+			 }); */
 		}
 	};
 	$scope.updateHistory();
-	
+
 	$scope.prevPage = function() {
 		$scope.page = $scope.page - 1;
 		$scope.updateHistory();
 	};
-	
+
 	$scope.nextPage = function() {
 		$scope.page = $scope.page + 1;
 		$scope.updateHistory();
@@ -187,9 +195,11 @@ function($scope, $location, $timeout, Monitor, Service) {
 			$scope.service = Service.get({
 				key : $scope.serviceKey
 			});
-			params = {serviceKey : $scope.serviceKey};
+			params = {
+				serviceKey : $scope.serviceKey
+			};
 		}
-		
+
 		$scope.monitors = Monitor.list(params, null, function(response) {
 			console.log("got: " + response);
 
@@ -234,27 +244,61 @@ function($scope, $location, $timeout, Monitor, Service) {
 	updateMonitors();
 }]);
 
-msControllers.controller('MonitorHistoryCtrl', ['$scope', '$location', '$timeout', 'Monitor',
-function($scope, $location, $timeout, Monitor) {
+msControllers.controller('MonitorHistoryCtrl', ['$scope', '$location', '$timeout', '$http', 'Monitor',
+function($scope, $location, $timeout, $http, Monitor) {
 	$scope.monitorKey = $location.search().monitorKey;
+	$scope.serviceKey = $location.search().serviceKey;
+	$scope.pageData = null;
+	$scope.page = 0;
+	$scope.pageSize = 100;
+	$scope.nextPageExists = false;
+	$scope.prevPageExists = false;
 
-	function updateHistory() {
+	$scope.updateHistory = function() {
 		if ($scope.monitorKey) {
 			$scope.monitor = Monitor.get({
 				key : $scope.monitorKey
 			});
-			Monitor.history({
-				key : $scope.monitorKey
-			}, null, function(response) {
-				console.log("got: " + response);
-				$scope.history = response.content;
-				$timeout(updateHistory, 30000);
-			}, function(response) {
-				console.log("failed to get services");
+			var config = {};
+			config.params = {
+				page : $scope.page,
+				pageSize : $scope.pageSize
+			};
+
+			$scope.pageData = $http.get('api/monitors/' + $scope.monitorKey + "/history", config).success(function(data, status, headers, config) {
+				$scope.history = data.content;
+				$scope.nextPageExists = data.last == false;
+				$scope.prevPageExists = data.first == false;
+
+				$timeout($scope.updateHistory, 30000);
+			}).error(function(data, status, headers, config) {
+				console.log("failed to get history");
+
+				$timeout($scope.updateHistory, 30000);
 			});
+			/*
+			 $scope.history = Service.history({
+			 key : $scope.serviceKey
+			 }, null, function(response) {
+			 console.log("got: " + response);
+			 //$scope.history = response.content;
+			 $timeout(updateHistory, 30000);
+			 }, function(response) {
+			 console.log("failed to get services");
+			 }); */
 		}
 	};
-	updateHistory();
+	$scope.updateHistory();
+
+	$scope.prevPage = function() {
+		$scope.page = $scope.page - 1;
+		$scope.updateHistory();
+	};
+
+	$scope.nextPage = function() {
+		$scope.page = $scope.page + 1;
+		$scope.updateHistory();
+	};
 
 	$scope.dateOptions = {
 		'year-format' : "'yyyy'",
