@@ -81,7 +81,7 @@ public class LogFileMonitorRunner extends MonitorRunner<LogFileMonitor>
 				log.warn(monitor.getKey() + " failed!");
 				eventManager.logMonitorResult(monitor, RecordingType.FAILED,
 						monitor.getLogFile() + " contained pattern match for "
-								+ pattern);
+								+ pattern + " in line '" + line + "'");
 				lastFailure = now;
 			}
 		}
