@@ -1,6 +1,5 @@
 package net.jadefisher.monkeystatus.model.monitor;
 
-
 public class TelnetMonitor extends Monitor {
 	private String targetHost;
 
@@ -21,5 +20,4 @@ public class TelnetMonitor extends Monitor {
 	public void setTargetPort(int targetPort) {
 		this.targetPort = targetPort;
 	}
-
 }

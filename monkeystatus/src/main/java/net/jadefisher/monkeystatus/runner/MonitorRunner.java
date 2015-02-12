@@ -9,7 +9,12 @@ import net.jadefisher.monkeystatus.model.service.MaintenanceWindow;
 import net.jadefisher.monkeystatus.model.service.Service;
 import net.jadefisher.monkeystatus.respository.ServiceRepository;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 public abstract class MonitorRunner<T extends Monitor> {
+	private static final Log log = LogFactory.getLog(MonitorRunner.class);
+
 	protected T monitor;
 
 	private ServiceRepository serviceRepo;
@@ -18,8 +23,8 @@ public abstract class MonitorRunner<T extends Monitor> {
 		this.serviceRepo = serviceRepo;
 	}
 
-	protected boolean monitorServiceNow(String serviceId) {
-		Service service = this.serviceRepo.find(serviceId);
+	protected boolean shouldMonitor() {
+		Service service = this.serviceRepo.find(monitor.getServiceKey());
 		boolean monitorNow = true;
 
 		if (service != null && service.getMaintenanceWindows() != null) {
@@ -52,6 +57,11 @@ public abstract class MonitorRunner<T extends Monitor> {
 					}
 				}
 			}
+		}
+
+		if (!monitorNow) {
+			log.info("Skipping monitoring " + monitor.getKey()
+					+ " as now is a maintenance window");
 		}
 
 		return monitorNow;

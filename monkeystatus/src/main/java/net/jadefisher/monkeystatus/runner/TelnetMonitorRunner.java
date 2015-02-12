@@ -35,7 +35,7 @@ public class TelnetMonitorRunner extends MonitorRunner<TelnetMonitor> {
 		log.info("Monitoring " + this.monitor.getTargetHost() + ":"
 				+ this.monitor.getTargetPort());
 		this.future = executorService.scheduleAtFixedRate(this::runMonitor, 5,
-				20, TimeUnit.SECONDS);
+				monitor.getPollRate(), TimeUnit.SECONDS);
 	}
 
 	@Override
@@ -44,29 +44,24 @@ public class TelnetMonitorRunner extends MonitorRunner<TelnetMonitor> {
 	}
 
 	private void runMonitor() {
-
-		if (!monitorServiceNow(monitor.getServiceKey())) {
-			log.info("Skipping monitoring " + monitor.getKey()
-					+ " as now is a maintenance window");
-			return;
-		}
-
-		Socket socket = new Socket();
-		try {
-			socket.connect(new InetSocketAddress(this.monitor.getTargetHost(),
-					this.monitor.getTargetPort()));
-			eventManager.logMonitorResult(monitor, RecordingType.PASSED,
-					"Connection okay to " + monitor.getTargetHost() + ":"
-							+ monitor.getTargetPort());
-		} catch (IOException e) {
-			eventManager.logMonitorResult(monitor, RecordingType.FAILED,
-					"Connection refused to " + monitor.getTargetHost() + ":"
-							+ monitor.getTargetPort());
-		} finally {
+		if (shouldMonitor()) {
+			Socket socket = new Socket();
 			try {
-				socket.close();
+				socket.connect(new InetSocketAddress(this.monitor
+						.getTargetHost(), this.monitor.getTargetPort()));
+				eventManager.logMonitorResult(monitor, RecordingType.PASSED,
+						"Connection okay to " + monitor.getTargetHost() + ":"
+								+ monitor.getTargetPort());
 			} catch (IOException e) {
-				log.warn("Exception closing socket");
+				eventManager.logMonitorResult(monitor, RecordingType.FAILED,
+						"Connection refused to " + monitor.getTargetHost()
+								+ ":" + monitor.getTargetPort());
+			} finally {
+				try {
+					socket.close();
+				} catch (IOException e) {
+					log.warn("Exception closing socket");
+				}
 			}
 		}
 	}

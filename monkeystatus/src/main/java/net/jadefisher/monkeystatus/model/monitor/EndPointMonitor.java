@@ -3,21 +3,11 @@ package net.jadefisher.monkeystatus.model.monitor;
 import java.util.List;
 
 public class EndPointMonitor extends Monitor {
-	private int pollRate;
-
 	private FormAuthentication formAuthentication;
 
 	private BasicAuthentication basicAuthentication;
 
 	private List<HttpRequestDefinition> requests;
-
-	public int getPollRate() {
-		return pollRate;
-	}
-
-	public void setPollRate(int pollRate) {
-		this.pollRate = pollRate;
-	}
 
 	public FormAuthentication getFormAuthentication() {
 		return formAuthentication;

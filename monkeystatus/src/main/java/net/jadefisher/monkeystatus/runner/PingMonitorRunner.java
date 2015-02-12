@@ -34,7 +34,7 @@ public class PingMonitorRunner extends MonitorRunner<PingMonitor> {
 		log.info("Skipping monitoring " + monitor.getKey()
 				+ " as now is a maintenance window");
 		this.future = executorService.scheduleAtFixedRate(this::runMonitor, 5,
-				20, TimeUnit.SECONDS);
+				monitor.getPollRate(), TimeUnit.SECONDS);
 	}
 
 	@Override
@@ -43,20 +43,16 @@ public class PingMonitorRunner extends MonitorRunner<PingMonitor> {
 	}
 
 	private void runMonitor() {
-
-		if (!monitorServiceNow(monitor.getServiceKey())) {
-			log.info("Skipping monitoring as now is a maintenance window");
-			return;
-		}
-
-		try {
-			InetAddress.getByName(monitor.getTargetHost()).isReachable(
-					monitor.getPingTimeout());
-			eventManager.logMonitorResult(monitor, RecordingType.PASSED,
-					monitor.getTargetHost() + " is reachable");
-		} catch (IOException e) {
-			eventManager.logMonitorResult(monitor, RecordingType.FAILED,
-					monitor.getTargetHost() + " is unreachable");
+		if (shouldMonitor()) {
+			try {
+				InetAddress.getByName(monitor.getTargetHost()).isReachable(
+						monitor.getPingTimeout());
+				eventManager.logMonitorResult(monitor, RecordingType.PASSED,
+						monitor.getTargetHost() + " is reachable");
+			} catch (IOException e) {
+				eventManager.logMonitorResult(monitor, RecordingType.FAILED,
+						monitor.getTargetHost() + " is unreachable");
+			}
 		}
 	}
 }

@@ -24,7 +24,7 @@ public class LogFileMonitorRunner extends MonitorRunner<LogFileMonitor>
 			.getLog(LogFileMonitorRunner.class);
 
 	private ScheduledExecutorService executorService;
-	private ScheduledFuture<?> future;
+	private List<ScheduledFuture<?>> futures;
 	private final List<Pattern> patterns;
 	private EventManager eventManager;
 	private Tailer tailer;
@@ -46,9 +46,13 @@ public class LogFileMonitorRunner extends MonitorRunner<LogFileMonitor>
 		this.eventManager = eventManager;
 		log.warn("Checking monitor: " + monitor.getName()
 				+ " ----------------------------------------");
+		futures = new ArrayList<>();
 
-		future = this.executorService.schedule(this::setUpMonitoring, 10,
-				TimeUnit.SECONDS);
+		futures.add(this.executorService.schedule(this::setUpMonitoring, 10,
+				TimeUnit.SECONDS));
+
+		futures.add(executorService.scheduleAtFixedRate(this::runMonitor, 5,
+				monitor.getPollRate(), TimeUnit.SECONDS));
 	}
 
 	@Override
@@ -56,7 +60,9 @@ public class LogFileMonitorRunner extends MonitorRunner<LogFileMonitor>
 		log.warn("Done checking monitor: " + monitor.getName()
 				+ " ----------------------------------------");
 		tailer.stop();
-		future.cancel(true);
+
+		for (ScheduledFuture<?> future : futures)
+			future.cancel(true);
 	}
 
 	private void setUpMonitoring() {
@@ -65,34 +71,38 @@ public class LogFileMonitorRunner extends MonitorRunner<LogFileMonitor>
 		tailer.run();
 	}
 
-	@Override
-	public void handle(String line) {
-		if (!monitorServiceNow(monitor.getServiceKey())) {
-			log.info("Skipping monitoring " + monitor.getKey()
-					+ " as now is a maintenance window");
-			return;
-		}
+	private void runMonitor() {
+		if (shouldMonitor()) {
+			long stablePeriodMillis = monitor.getRequiredStablePeriod() * 1000;
+			long now = System.currentTimeMillis();
 
-		long stablePeriodMillis = monitor.getRequiredStablePeriod() * 1000;
-		long now = System.currentTimeMillis();
-
-		for (Pattern pattern : patterns) {
-			if (pattern.matcher(line).matches()) {
-				log.warn(monitor.getKey() + " failed!");
-				eventManager.logMonitorResult(monitor, RecordingType.FAILED,
-						monitor.getLogFile() + " contained pattern match for "
-								+ pattern + " in line '" + line + "'");
-				lastFailure = now;
+			// We don't want to create 1000s of PASSED logs, but we do want to
+			// create them regularly
+			if ((now - lastFailure) > stablePeriodMillis
+					&& (now - lastPass) > stablePeriodMillis) {
+				log.warn(monitor.getKey() + " passed!");
+				eventManager.logMonitorResult(monitor, RecordingType.PASSED,
+						null);
+				lastPass = now;
 			}
 		}
+	}
 
-		// We don't want to create 1000s of PASSED logs, but we do want to
-		// create them regularly
-		if ((now - lastFailure) > stablePeriodMillis
-				&& (now - lastPass) > stablePeriodMillis) {
-			log.warn(monitor.getKey() + " passed!");
-			eventManager.logMonitorResult(monitor, RecordingType.PASSED, null);
-			lastPass = now;
+	@Override
+	public void handle(String line) {
+		if (shouldMonitor()) {
+			long now = System.currentTimeMillis();
+
+			for (Pattern pattern : patterns) {
+				if (pattern.matcher(line).matches()) {
+					log.warn(monitor.getKey() + " failed!");
+					eventManager.logMonitorResult(monitor,
+							RecordingType.FAILED, monitor.getLogFile()
+									+ " contained pattern match for " + pattern
+									+ " in line '" + line + "'");
+					lastFailure = now;
+				}
+			}
 		}
 	}
 
@@ -102,13 +112,10 @@ public class LogFileMonitorRunner extends MonitorRunner<LogFileMonitor>
 
 	@Override
 	public void fileNotFound() {
-		if (!monitorServiceNow(monitor.getServiceKey())) {
-			log.info("Skipping monitoring as now is a maintenance window");
-			return;
+		if (shouldMonitor()) {
+			this.eventManager.logMonitorResult(monitor, RecordingType.ERROR,
+					"Couldn't find log file: " + this.monitor.getLogFile());
 		}
-
-		this.eventManager.logMonitorResult(monitor, RecordingType.ERROR,
-				"Couldn't find log file: " + this.monitor.getLogFile());
 	}
 
 	@Override
@@ -117,13 +124,10 @@ public class LogFileMonitorRunner extends MonitorRunner<LogFileMonitor>
 
 	@Override
 	public void handle(Exception ex) {
-		if (!monitorServiceNow(monitor.getServiceKey())) {
-			log.info("Skipping monitoring as now is a maintenance window");
-			return;
+		if (shouldMonitor()) {
+			this.eventManager.logMonitorResult(monitor, RecordingType.ERROR,
+					"Exception reading file: " + this.monitor.getLogFile()
+							+ " - " + ex.getMessage());
 		}
-
-		this.eventManager.logMonitorResult(monitor, RecordingType.ERROR,
-				"Exception reading file: " + this.monitor.getLogFile() + " - "
-						+ ex.getMessage());
 	}
 }

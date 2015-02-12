@@ -61,75 +61,66 @@ public class EndPointMonitorRunner extends MonitorRunner<EndPointMonitor> {
 				.setDefaultCookieStore(cookieStore).build();
 
 		this.future = executorService.scheduleAtFixedRate(this::runMonitor, 5,
-				20, TimeUnit.SECONDS);
+				monitor.getPollRate(), TimeUnit.SECONDS);
 	}
 
 	private void runMonitor() {
+		if (shouldMonitor()) {
+			cookieStore.clear();
+			Map<String, String> headers = new HashMap<String, String>();
+			List<HttpRequestResult> results = new ArrayList<HttpRequestResult>();
 
-		if (!monitorServiceNow(monitor.getServiceKey())) {
-			log.info("Skipping monitoring " + monitor.getKey()
-					+ " as now is a maintenance window");
-			return;
-		}
-
-		// log.info("Checking monitor: " + this.monitor.getName()
-		// + " ----------------------------------------");
-
-		cookieStore.clear();
-		Map<String, String> headers = new HashMap<String, String>();
-		List<HttpRequestResult> results = new ArrayList<HttpRequestResult>();
-
-		if (this.monitor.getFormAuthentication() != null) {
-			results.add(executeAndMonitorRequest(httpclient, this.monitor
-					.getFormAuthentication().getLogonRequest(), headers));
-			// log.debug("authenticated with form authentication");
-		} else if (this.monitor.getBasicAuthentication() != null) {
-			String authString = this.monitor.getBasicAuthentication()
-					.getUsername()
-					+ ":"
-					+ this.monitor.getBasicAuthentication().getPassword();
-			String encoding = Base64.encodeBase64String(authString.getBytes());
-			headers.put("Authorization", "Basic " + encoding);
-		}
-
-		for (HttpRequestDefinition req : this.monitor.getRequests()) {
-			results.add(executeAndMonitorRequest(httpclient, req, headers));
-		}
-
-		if (this.monitor.getFormAuthentication() != null
-				&& this.monitor.getFormAuthentication().getLogoffRequest() != null) {
-			results.add(executeAndMonitorRequest(httpclient, this.monitor
-					.getFormAuthentication().getLogoffRequest(), headers));
-			// log.debug("logged off form authentication");
-		}
-
-		RecordingType overallMonitorLogType = RecordingType.PASSED;
-		String overallMonitorMessage = null;
-
-		for (HttpRequestResult result : results) {
-			if (result.getType() == RecordingType.ERROR) {
-				overallMonitorLogType = RecordingType.ERROR;
-			} else if (result.getType() == RecordingType.FAILED
-					&& overallMonitorLogType != RecordingType.ERROR) {
-				overallMonitorLogType = RecordingType.FAILED;
+			if (this.monitor.getFormAuthentication() != null) {
+				results.add(executeAndMonitorRequest(httpclient, this.monitor
+						.getFormAuthentication().getLogonRequest(), headers));
+				// log.debug("authenticated with form authentication");
+			} else if (this.monitor.getBasicAuthentication() != null) {
+				String authString = this.monitor.getBasicAuthentication()
+						.getUsername()
+						+ ":"
+						+ this.monitor.getBasicAuthentication().getPassword();
+				String encoding = Base64.encodeBase64String(authString
+						.getBytes());
+				headers.put("Authorization", "Basic " + encoding);
 			}
 
-			if (result.getType() != RecordingType.PASSED) {
-				overallMonitorMessage = overallMonitorMessage == null ? result
-						.getMessage() : overallMonitorMessage + ", "
-						+ result.getMessage();
+			for (HttpRequestDefinition req : this.monitor.getRequests()) {
+				results.add(executeAndMonitorRequest(httpclient, req, headers));
+			}
+
+			if (this.monitor.getFormAuthentication() != null
+					&& this.monitor.getFormAuthentication().getLogoffRequest() != null) {
+				results.add(executeAndMonitorRequest(httpclient, this.monitor
+						.getFormAuthentication().getLogoffRequest(), headers));
+				// log.debug("logged off form authentication");
+			}
+
+			RecordingType overallMonitorLogType = RecordingType.PASSED;
+			String overallMonitorMessage = null;
+
+			for (HttpRequestResult result : results) {
+				if (result.getType() == RecordingType.ERROR) {
+					overallMonitorLogType = RecordingType.ERROR;
+				} else if (result.getType() == RecordingType.FAILED
+						&& overallMonitorLogType != RecordingType.ERROR) {
+					overallMonitorLogType = RecordingType.FAILED;
+				}
+
+				if (result.getType() != RecordingType.PASSED) {
+					overallMonitorMessage = overallMonitorMessage == null ? result
+							.getMessage() : overallMonitorMessage + ", "
+							+ result.getMessage();
+				}
+			}
+
+			// Send through one logMonitor result
+			try {
+				this.eventManager.logMonitorResult(monitor,
+						overallMonitorLogType, overallMonitorMessage);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
-
-		// Send through one logMonitor result
-		try {
-			this.eventManager.logMonitorResult(monitor, overallMonitorLogType,
-					overallMonitorMessage);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		// log.info("finished checking " + this.monitor.getName()
-		// + " ----------------------------------------");
 	}
 
 	@Override

@@ -28,6 +28,8 @@ public abstract class Monitor {
 
 	private Set<String> tags;
 
+	private int pollRate;
+
 	public String getDocId() {
 		return docId;
 	}
@@ -86,5 +88,13 @@ public abstract class Monitor {
 
 	public String getType() {
 		return this.getClass().getName();
+	}
+
+	public int getPollRate() {
+		return pollRate;
+	}
+
+	public void setPollRate(int pollRate) {
+		this.pollRate = pollRate;
 	}
 }
